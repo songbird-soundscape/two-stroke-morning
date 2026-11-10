@@ -19,7 +19,7 @@
 const KITS = [
   { what: 'A stack of 25 business cards', cost: '' },
   { what: 'A native seed packet for your region', cost: '' },
-  { what: 'Lunch for the lab, if you like (nothing mailed)', cost: '5–10' },
+  { what: 'Lunch for the lab, if you like (nothing mailed), from basic to fancy', cost: '5–15' },
 ];
 document.getElementById('kits').innerHTML = KITS.map(k => `<li>${k.what}: <span class="p">${k.cost ? '$' + k.cost : 'price coming soon'}</span></li>`).join('');
 // Paste the lab's tip-jar link (for example a Ko-fi page) between the quotes to switch on the first button.
