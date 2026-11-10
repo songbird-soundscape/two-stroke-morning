@@ -5,14 +5,22 @@
 *{box-sizing:border-box}body{background:var(--bg);color:var(--ink);font:18px/1.55 system-ui,-apple-system,sans-serif;margin:0;padding:40px 16px}main{max-width:520px;margin:0 auto;display:grid;gap:14px}h1{font-size:26px;margin:0}
 .opt{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}.opt b{display:block}.opt span{color:var(--muted);font-size:15px}
 .go{display:inline-block;margin-top:8px;padding:10px 16px;border-radius:10px;background:var(--vis);color:#fff;font-weight:600;text-decoration:none}.go[aria-disabled="true"]{opacity:.45;pointer-events:none}
-.m{color:var(--muted);font-size:15px;margin:0}a{color:var(--link)}</style>
+#kits li{margin:2px 0}#kits .p{font-weight:600}.m{color:var(--muted);font-size:15px;margin:0}a{color:var(--link)}</style>
 </head><body><main>
 <h1>Tip the lab</h1>
 <div class="opt"><b>The lab</b><span>Tips cover only what it costs to mail seed packets and get around. Now and then, a hand tool. Nothing with a motor, a battery or fuel. </span><span id="labNote">Tip jar coming soon. Tips are not tax-deductible.</span><br><a class="go" id="labGo" href="#" aria-disabled="true">Tip the lab</a></div>
+<div class="opt"><b>Kits, at cost</b><span>Want something mailed to you? Tip what the kit costs to make and mail, and put your address in the note. Small tips of any size even out the differences.</span>
+  <ul id="kits" style="margin:8px 0 0;padding-left:18px"></ul></div>
 <div class="opt"><b>The Wikimedia Foundation</b><span>The nonprofit that runs Wikipedia, where much of the background reading for these apps starts. In the US, gifts to it are tax-deductible.</span><br><a class="go" href="https://donate.wikimedia.org/" rel="noopener">Give to Wikimedia</a></div>
 <p class="m"><a href="../">Back to Two-Stroke Morning</a></p>
 </main>
 <script>
+// Kits: fill in each cost (US dollars, materials plus postage). A blank cost shows "price coming soon".
+const KITS = [
+  { what: 'A stack of 25 business cards', cost: '' },
+  { what: 'A native seed packet for your region', cost: '' },
+];
+document.getElementById('kits').innerHTML = KITS.map(k => `<li>${k.what}: <span class="p">${k.cost ? '$' + k.cost : 'price coming soon'}</span></li>`).join('');
 // Paste the lab's tip-jar link (for example a Ko-fi page) between the quotes to switch on the first button.
 const TIP_URL = '';
 if (TIP_URL) { const a = document.getElementById('labGo'); a.href = TIP_URL; a.rel = 'noopener'; a.removeAttribute('aria-disabled'); document.getElementById('labNote').textContent = 'Tips are not tax-deductible.'; }
