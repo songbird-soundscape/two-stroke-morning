@@ -1287,7 +1287,7 @@ function sing(b, when, pan, vol) {
 }
 function birdTick(now) {
   if (!AC || AC.state !== 'running') return;
-  if (birdBus) birdBus.gain.setTargetAtTime(0.2 * SCAPE * SCAPE * (2 - SCAPE), AC.currentTime, 0.1);   // birds stay soft: a backdrop, not a performance
+  if (birdBus) birdBus.gain.setTargetAtTime(0.05 * SCAPE * SCAPE * (2 - SCAPE), AC.currentTime, 0.1);   // birds are faint, far off: you strain to hear them unless the volume is up
   if (SCAPE < 0.03 || now < nextBird) return;
   const t = AC.currentTime; if ($('bd_turns').checked && t < turnFree) { nextBird = now + 200; return; }
   const b = BIRDS[Math.floor(Math.random() * BIRDS.length)], len = sing(b, t + 0.05, clamp((b.x - 120) / 120, -0.9, 0.9), 0.35);
@@ -1361,7 +1361,7 @@ $('bd_reset').onclick = () => { BIRDS[BSEL].song = JSON.parse(JSON.stringify(BIR
 let sonoPlay = null;
 $('bd_play').onclick = () => { try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.resume) AC.resume(); } catch (e) { return; }
   const b = BIRDS[BSEL], t0 = AC.currentTime + 0.05; if (!birdBus) sing(b, t0, 0, 0); const keep = birdBus.gain.value;
-  birdBus.gain.cancelScheduledValues(AC.currentTime); birdBus.gain.setValueAtTime(0.22, AC.currentTime);
+  birdBus.gain.cancelScheduledValues(AC.currentTime); birdBus.gain.setValueAtTime(0.07, AC.currentTime);
   const len = sing(b, t0, 0, 0.4); b.until = performance.now() + len * 1000; turnFree = t0 + len + 0.4; sonoPlay = { t0: performance.now() + 50, len }; };
 // the divider: drag on the street, or use the slider under it
 let dragging = false;
