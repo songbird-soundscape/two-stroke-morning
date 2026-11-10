@@ -101,6 +101,7 @@ canvas.plot { width: 100%; display: block; }
   </header>
 
   <div class="stage"><canvas id="scene" width="960" height="400" aria-label="Pixel street: a worker with a backpack leaf blower and a worker with a string trimmer on the next lawn, a neighbour at a window, exhaust and sound rings"></canvas></div>
+  <div class="row"><label for="scape">Leaf blower street ⟷ soundscape (or drag the divider on the street)</label><span class="val" id="scapeV">leaf blower street</span><input id="scape" type="range" min="0" max="100" value="4"></div>
 
   <div class="hud" id="hud" aria-live="polite"></div>
 
@@ -182,6 +183,37 @@ canvas.plot { width: 100%; display: block; }
         <p class="note"><b>Perfect pitch</b> (absolute pitch) is naming a note with no reference. It's rare, roughly 1 in 10,000 people, more common with early music training and among speakers of tonal languages. <b>Relative pitch</b>, hearing the distance between notes, is what most musicians use, and anyone can train it. Scales here are in equal temperament, except maqam Rast, which uses quarter tones (E and B "half-flat", marked with a reversed flat): engines, unlike pianos, can play between the keys.</p>
       </div>
     </div>
+  </section>
+
+  <section class="bench" aria-labelledby="hBirds">
+    <header><h2 id="hBirds">Soundscape: build a birdsong</h2><span class="eyebrow">whistles, trills, warbles, whoops and cries</span></header>
+    <p class="note">Drag the divider on the street above to the left to switch into soundscape mode. The birds there sing songs assembled from parts, the way real songbirds build theirs: single <b>notes</b>, grouped into <b>syllables</b> (a chip, a slur, a whoop), repeated into <b>phrases</b> (a trill is one syllable repeated fast), and strung together by each bird's own rules. Pick a bird, then rebuild its song.</p>
+    <div class="btns" id="bd_birds" role="group" aria-label="Birds"></div>
+    <div class="eyebrow">Sonogram: time across, pitch up, the way birders read songs</div>
+    <canvas class="plot" id="cSono" height="180" aria-label="Sonogram of the selected bird's song"></canvas>
+    <div class="btns"><span class="eyebrow">The song</span><span id="bd_song" class="btns"></span></div>
+    <div class="btns"><span class="eyebrow">Add a part</span><span id="bd_lex" class="btns"></span></div>
+    <div class="benches">
+      <div style="display:grid;gap:8px;min-width:0">
+        <div class="eyebrow" id="bd_selLab">Selected part</div>
+        <div class="row"><label for="bd_f">Pitch</label><span class="val" id="bd_fV"></span><input id="bd_f" type="range" min="1" max="8.5" step="0.1" value="3"></div>
+        <div class="row"><label for="bd_d">Length</label><span class="val" id="bd_dV"></span><input id="bd_d" type="range" min="0.03" max="1.5" step="0.01" value="0.3"></div>
+        <div class="row"><label for="bd_r">Speed (trills and rattles)</label><span class="val" id="bd_rV"></span><input id="bd_r" type="range" min="4" max="45" step="1" value="16"></div>
+        <div class="row"><label for="bd_x">Repeats</label><span class="val" id="bd_xV"></span><input id="bd_x" type="range" min="1" max="8" step="1" value="1"></div>
+        <div class="btns"><button id="bd_left">◀ Move earlier</button><button id="bd_right">Move later ▶</button><button id="bd_del">Remove part</button></div>
+      </div>
+      <div style="display:grid;gap:8px;min-width:0">
+        <div class="eyebrow">Assembly rules</div>
+        <div class="row"><label for="bd_accel">Speed up through repeats</label><span class="val" id="bd_accelV"></span><input id="bd_accel" type="range" min="0" max="0.8" step="0.05" value="0.2"></div>
+        <div class="row"><label for="bd_vary">Vary each time it sings</label><span class="val" id="bd_varyV"></span><input id="bd_vary" type="range" min="0" max="1" step="0.05" value="0.3"></div>
+        <div class="row"><label for="bd_drift">Pitch drift across the song</label><span class="val" id="bd_driftV"></span><input id="bd_drift" type="range" min="-1" max="1" step="0.05" value="0"></div>
+        <div class="row"><label for="bd_gap">Gap between parts</label><span class="val" id="bd_gapV"></span><input id="bd_gap" type="range" min="0" max="0.4" step="0.01" value="0.06"></div>
+        <div class="btns"><span class="toggle"><input type="checkbox" id="bd_turns" checked><label for="bd_turns">Take turns (birds avoid singing over each other)</label></span></div>
+        <div class="btns"><span class="toggle"><input type="checkbox" id="bd_lombard" checked><label for="bd_lombard">Sing up over the noise</label></span></div>
+        <div class="btns"><button class="go" id="bd_play">Play this song</button><button id="bd_reset">Back to the bird's own song</button></div>
+      </div>
+    </div>
+    <p class="note"><b>The science underneath.</b> Songbirds learn their songs from adults, so songs have local dialects, and many species keep a repertoire of several song types. Songs are built hierarchically from notes, syllables and phrases, with species-specific rules for their order (Catchpole &amp; Slater 2008). Neighbouring birds often avoid singing over one another, which is what "take turns" models. In noise, birds sing louder (the Lombard effect) and city birds sing higher, lifting their songs above the low rumble of engines (Brumm 2004; Slabbekoorn &amp; Peet 2003). These six birds are fanciful, each loosely inspired by a real singer.</p>
   </section>
 
   <section class="bench" aria-labelledby="hBP">
@@ -923,6 +955,11 @@ function drawScene(sim) {
   const c = $('scene'), r = c.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2), W2 = Math.round(r.width * d), H2 = Math.round(r.width * PH / PW * d);
   if (c.width !== W2 || c.height !== H2) { c.width = W2; c.height = H2; }
   const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(off, 0, 0, W2, H2);
+  if (SCAPE > 0.001) { const now = performance.now(); drawSoundscape(now); const xs = (1 - SCAPE) * PW, sx = Math.floor(xs);
+    g.drawImage(off2, sx, 0, PW - sx, PH, sx / PW * W2, 0, W2 - sx / PW * W2, H2); }
+  { const xd = (1 - SCAPE) * W2, hy = H2 * 0.5, hw = Math.max(16, W2 / 45); g.fillStyle = 'rgba(255,255,255,0.85)'; g.fillRect(xd - 1, 0, 2, H2);
+    g.fillStyle = '#ffffff'; g.beginPath(); g.arc(xd, hy, hw * 0.9, 0, 2 * Math.PI); g.fill(); g.fillStyle = '#18211d'; g.font = `700 ${Math.round(hw * 0.8)}px sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText('◂▸', xd, hy + 1); g.textAlign = 'left'; g.textBaseline = 'alphabetic'; }
   if (PRAIRIE && GRAZER === 'tex' && prairieK > 0.8) { g.font = `700 ${Math.max(12, Math.round(W2 / 50))}px ${tok('--f-pixel') || 'monospace'}`; g.fillStyle = '#ffd866'; g.strokeStyle = '#000'; g.lineWidth = Math.max(2, W2 / 350);
     const t2 = 'YOU NAME IT, TEX!', x2 = W2 * 0.52, y2 = H2 * 0.12; g.strokeText(t2, x2, y2); g.fillText(t2, x2, y2); }
   // HUD label inside the scene
@@ -1185,12 +1222,161 @@ function callTick(now) {
   const bis = PRAIRIE && prairieK > 0.8 && (GRAZER === 'bison' || GRAZER === 'tex');
   if (cows && (!bis || Math.random() < 0.5)) animalCall('cow', Math.random() * 1.4 - 0.7); else if (bis) animalCall('bison', Math.random() * 1.4 - 0.7);
 }
+// ================= soundscape: the split street and the birds =================
+let SCAPE = 0.04;                                            // how much of the street (from the right) is soundscape; a sliver at load
+const off2 = document.createElement('canvas'); off2.width = PW; off2.height = PH; const og2 = off2.getContext('2d');
+const p2 = (x, y, c, w = 1, h = 1) => { og2.fillStyle = c; og2.fillRect(Math.round(x), Math.round(y), w, h); };
+const LEX = {
+  whistle: 'Whistle', slurUp: 'Slur up', slurDown: 'Slur down', whoop: 'Whoop', trill: 'Trill', warble: 'Warble', buzz: 'Buzz', chip: 'Chip', cry: 'Cry', rattle: 'Rattle',
+};
+const WAVE = { buzz: 'triangle', cry: 'sawtooth', rattle: 'square' };
+const BIRDS = [
+  { id: 'streak', name: 'Streak-breast', like: 'song sparrow', body: '#8a6a4a', wing: '#5a4030', x: 112, y: 12,
+    song: { parts: [{ el: 'whistle', f: 3.1, d: 0.16, r: 16, x: 3 }, { el: 'buzz', f: 4.6, d: 0.35, r: 16, x: 1 }, { el: 'trill', f: 3.6, d: 0.7, r: 14, x: 1 }, { el: 'chip', f: 5.2, d: 0.05, r: 16, x: 2 }], rules: { accel: 0.25, vary: 0.3, drift: -0.2, gap: 0.06 } } },
+  { id: 'feebee', name: 'Fee-bee', like: 'black-capped chickadee', body: '#d8d4c8', wing: '#2a2a2a', x: 92, y: 18,
+    song: { parts: [{ el: 'whistle', f: 3.9, d: 0.38, r: 16, x: 1 }, { el: 'whistle', f: 3.35, d: 0.45, r: 16, x: 1 }], rules: { accel: 0, vary: 0.15, drift: 0, gap: 0.12 } } },
+  { id: 'redwing', name: 'Redwing', like: 'red-winged blackbird', body: '#1e1e1e', wing: '#e03131', x: 196, y: 44,
+    song: { parts: [{ el: 'chip', f: 2.4, d: 0.07, r: 16, x: 2 }, { el: 'whoop', f: 2.6, d: 0.28, r: 16, x: 1 }, { el: 'rattle', f: 3.4, d: 0.8, r: 26, x: 1 }], rules: { accel: 0, vary: 0.25, drift: 0, gap: 0.05 } } },
+  { id: 'meadow', name: 'Meadow flute', like: 'meadowlark', body: '#e8c23a', wing: '#6b5030', x: 166, y: 46,
+    song: { parts: [{ el: 'slurDown', f: 3.4, d: 0.3, r: 16, x: 1 }, { el: 'slurDown', f: 2.7, d: 0.24, r: 16, x: 1 }, { el: 'warble', f: 3.6, d: 0.45, r: 16, x: 1 }, { el: 'slurDown', f: 2.5, d: 0.32, r: 16, x: 1 }], rules: { accel: 0, vary: 0.35, drift: 0, gap: 0.04 } } },
+  { id: 'cheer', name: 'Cheer-cheer', like: 'northern cardinal', body: '#d42a2a', wing: '#9a1e1e', x: 30, y: 26,
+    song: { parts: [{ el: 'slurDown', f: 4.2, d: 0.24, r: 16, x: 3 }, { el: 'slurUp', f: 2.9, d: 0.12, r: 16, x: 5 }], rules: { accel: 0.45, vary: 0.2, drift: 0, gap: 0.05 } } },
+  { id: 'dusk', name: 'Dusk flute', like: 'wood thrush', body: '#a0663a', wing: '#7a4a2a', x: 122, y: 24,
+    song: { parts: [{ el: 'chip', f: 2.2, d: 0.05, r: 16, x: 2 }, { el: 'whistle', f: 2.5, d: 0.22, r: 16, x: 1 }, { el: 'warble', f: 3.4, d: 0.28, r: 16, x: 1 }, { el: 'trill', f: 5.6, d: 0.38, r: 34, x: 1 }], rules: { accel: 0, vary: 0.25, drift: 0, gap: 0.05 } } },
+];
+BIRDS.forEach(b => { b.home = JSON.parse(JSON.stringify(b.song)); b.until = 0; });
+let BSEL = 0, PSEL = 0, birdBus = null, nextBird = 0, turnFree = 0;
+// one part's pitch (Hz) and loudness over time, sampled; the same curves draw the sonogram and drive the oscillator
+function partCurves(p, d, fmul) {
+  const N = Math.max(24, Math.ceil(d * 600)), F = new Float32Array(N), A = new Float32Array(N), f = p.f * 1000 * fmul;
+  for (let i = 0; i < N; i++) { const u = i / (N - 1), t = u * d, env = Math.pow(Math.sin(Math.PI * u), 0.4); let fr = f, a = env;
+    switch (p.el) {
+      case 'slurUp': fr = f * (0.75 + 0.5 * u); break;
+      case 'slurDown': fr = f * (1.25 - 0.5 * u); break;
+      case 'whoop': fr = f * (0.55 + 0.75 * u * u); a = env * (0.5 + 0.5 * u); break;
+      case 'trill': { const ph = (t * p.r) % 1; a = ph < 0.6 ? Math.sin(Math.PI * ph / 0.6) * Math.min(1, env * 3) : 0; fr = f * (1.08 - 0.16 * Math.min(1, ph / 0.6)); break; }
+      case 'warble': fr = f * (1 + 0.2 * Math.sin(2 * Math.PI * 9 * t + p.f) + 0.09 * Math.sin(2 * Math.PI * 14 * t)); break;
+      case 'buzz': a = env * (0.5 + 0.5 * Math.sin(2 * Math.PI * 95 * t)); break;
+      case 'chip': fr = f * (1.35 - 0.5 * u); break;
+      case 'cry': fr = f * (1.15 - 0.35 * u); break;
+      case 'rattle': { const ph = (t * p.r) % 1; fr = f * 0.75; a = ph < 0.45 ? env : 0.05 * env; break; }
+    }
+    F[i] = Math.max(60, fr); A[i] = Math.max(0, a); }
+  return { F, A };
+}
+// a full rendition: parts in order, repeats speeding up, a little variation, pitch drifting across the song
+function render(b, lombard) {
+  const R = b.song.rules, out = []; let t = 0; const total = b.song.parts.reduce((s, p) => s + p.x, 0); let k = 0;
+  const vary = () => 1 + R.vary * (Math.random() - 0.5) * 0.16;
+  b.song.parts.forEach(p => { for (let j = 0; j < p.x; j++, k++) {
+    const d = p.d * (1 - R.accel * (p.x > 1 ? j / (p.x - 1) : 0) * 0.6) * (1 + R.vary * (Math.random() - 0.5) * 0.2);
+    const fmul = vary() * (1 + R.drift * 0.15 * (total > 1 ? k / (total - 1) : 0)) * lombard;
+    out.push({ p, t, d, ...partCurves(p, d, fmul) }); t += d + R.gap * (j < p.x - 1 ? 0.5 : 1); } });
+  return { notes: out, len: t };
+}
+function sing(b, when, pan, vol) {
+  if (!AC) return 0; if (!birdBus) { birdBus = AC.createGain(); const cp = AC.createDynamicsCompressor(); birdBus.connect(cp); cp.connect(AC.destination); birdBus.gain.value = 0; }
+  const lomb = $('bd_lombard').checked ? 1 + 0.1 * (1 - SCAPE) : 1, R = render(b, lomb);
+  R.notes.forEach(n => { const t0 = when + n.t, o = AC.createOscillator(), g = AC.createGain(); o.type = WAVE[n.p.el] || 'sine';
+    o.frequency.setValueCurveAtTime(n.F, t0, n.d); g.gain.setValueAtTime(0, t0); g.gain.setValueCurveAtTime(n.A.map(a => a * vol), t0, n.d);
+    let last = g; if (o.type !== 'sine') { const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = n.p.f * 2600; g.connect(lp); last = lp; }
+    const pn = AC.createStereoPanner ? AC.createStereoPanner() : null; if (pn) { pn.pan.value = pan; last.connect(pn); pn.connect(birdBus); } else last.connect(birdBus);
+    o.connect(g); o.start(t0); o.stop(t0 + n.d + 0.02); });
+  return R.len;
+}
+function birdTick(now) {
+  if (!AC || AC.state !== 'running') return;
+  if (birdBus) birdBus.gain.setTargetAtTime(0.5 * SCAPE * SCAPE * (2 - SCAPE), AC.currentTime, 0.1);
+  if (SCAPE < 0.03 || now < nextBird) return;
+  const t = AC.currentTime; if ($('bd_turns').checked && t < turnFree) { nextBird = now + 200; return; }
+  const b = BIRDS[Math.floor(Math.random() * BIRDS.length)], len = sing(b, t + 0.05, clamp((b.x - 120) / 120, -0.9, 0.9), 0.35);
+  b.until = now + 50 + len * 1000; turnFree = t + len + 0.4; nextBird = now + ($('bd_turns').checked ? 300 : 700 + Math.random() * 2500);
+}
+function drawBird(b, now) {
+  const x = b.x, y = b.y, singing = now < b.until;
+  p2(x - 2, y + 1, b.wing, 2, 1); p2(x, y, b.body, 4, 3); p2(x + 1, y + 1, b.wing, 2, 1); p2(x + 3, y - 1, b.body, 2, 2); p2(x + 4, y - 1, '#111');
+  if (singing) { p2(x + 5, y - 1, '#f2a33a'); p2(x + 5, y + 1, '#f2a33a'); const k = Math.floor(now / 160) % 4; p2(x + 6 + k, y - 4 - k * 2, '#ffffff', 2, 1); p2(x + 7 + k, y - 6 - k * 2, '#ffffff', 1, 2); }
+  else p2(x + 5, y, '#f2a33a');
+  p2(x + 1, y + 3, '#3a2a1a'); p2(x + 3, y + 3, '#3a2a1a');
+}
+function drawSoundscape(now) {
+  for (let y = 0; y < 40; y++) p2(0, y, y < 20 ? PAL.sky1 : PAL.sky2, PW, 1);
+  p2(204, 8, PAL.sun, 9, 9); p2(202, 10, PAL.sun, 13, 5); p2(206, 6, PAL.sun, 5, 13);
+  for (let x = 0; x < PW; x += 3) { const h = 6 + ((x * 37) % 11); p2(x, 40 - h, PAL.far, 3, h); }
+  p2(0, 40, PAL.grass, PW, 40); p2(0, 80, PAL.walk, PW, 6); p2(0, 86, PAL.road, PW, 14); for (let x = 0; x < PW; x += 16) p2(x, 92, PAL.line, 8, 1);
+  const H = HOUSE; p2(H.x, H.y, PAL.wall, H.w, H.h); for (let k = 0; k < 14; k++) p2(H.x - 3 + k * 2.4, H.y - k, PAL.roof, H.w + 6 - k * 4.8, 1);
+  p2(H.x + 12, H.y + 16, '#6b4a2e', 9, 18); const W = WIN; p2(W.x - 1, W.y - 1, '#fff', W.w + 2, W.h + 2); p2(W.x, W.y, PAL.win, W.w, W.h);
+  p2(W.x + 5, W.y + 3, '#3b2a20', 5, 2); p2(W.x + 5, W.y + 5, PAL.skin, 5, 5); p2(W.x + 4, W.y + 10, '#5470a6', 7, 2); p2(W.x + 6, W.y + 7, '#222'); p2(W.x + 8, W.y + 7, '#222'); p2(W.x + 6, W.y + 9, '#222'); p2(W.x + 7, W.y + 10, '#222'); p2(W.x + 8, W.y + 9, '#222');   // a smile
+  p2(100, 30, PAL.trunk, 4, 22); for (let y = -11; y <= 9; y++) for (let x = -15; x <= 15; x++) { const e = (x * x) / 225 + (y * y) / 110; if (e <= 1) p2(102 + x, 21 + y, (x * 7 + y * 13) % 5 === 0 ? PAL.leaf2 : PAL.leaf); }
+  for (let x = 72; x < PW; x++) { const s = (x * 73 + 11) % 97, h = 14 + (s % 9) + ((x * 13) % 7) + Math.sin(now / 900 + x / 9); p2(x, 79 - h, s % 4 === 0 ? '#8a7a3a' : s % 3 === 0 ? '#6f8f3a' : '#5f8a35', 1, h + 1); }
+  for (let x = 78; x < PW; x += 11) { const s = (x * 31) % 23, y = 52 + (s % 18); p2(x, y, '#2f5d24', 1, 80 - y); p2(x - 1, y - 2, s % 3 === 0 ? '#b05fa8' : s % 3 === 1 ? '#f2c21b' : '#ff8a1e', 3, 2); }
+  p2(190, 48, '#6b4a2e', 2, 32); p2(160, 50, '#6b4a2e', 2, 30);   // two fence posts in the grass for perches
+  BIRDS.forEach(b => drawBird(b, now));
+}
+// sonogram of the selected bird
+function drawSono(playT) {
+  const c = $('cSono'); if (!c) return; const r = c.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2), h = 180;
+  if (c.width !== Math.round(r.width * d)) { c.width = Math.round(r.width * d); c.height = h * d; c.style.height = h + 'px'; }
+  const g = c.getContext('2d'); g.setTransform(d, 0, 0, d, 0, 0); const w = r.width, Lp = 40, B = 20, T = 8, pw = w - Lp - 8, ph = h - B - T;
+  g.clearRect(0, 0, w, h); const b = BIRDS[BSEL], R = render(b, 1), len = Math.max(1, R.len);
+  const X = t => Lp + t / len * pw, Y = f => T + (1 - f / 9000) * ph;
+  g.strokeStyle = tok('--line'); g.fillStyle = tok('--muted'); g.font = mono(10.5); g.lineWidth = 1;
+  [2, 4, 6, 8].forEach(k => { g.beginPath(); g.moveTo(Lp, Y(k * 1000)); g.lineTo(Lp + pw, Y(k * 1000)); g.stroke(); g.textAlign = 'right'; g.fillText(k + ' kHz', Lp - 4, Y(k * 1000) + 3.5); });
+  g.textAlign = 'center'; for (let s = 0; s <= len; s += 0.5) g.fillText(s.toFixed(1) + ' s', X(s), h - 5);
+  let k = 0; b.song.parts.forEach((p, pi) => { for (let j = 0; j < p.x; j++) { const n = R.notes[k++]; if (!n) return;
+    g.fillStyle = pi === PSEL ? tok('--vis') : tok('--ink');
+    for (let i = 0; i < n.F.length; i += 2) { if (n.A[i] < 0.05) continue; g.globalAlpha = Math.min(1, n.A[i]); g.fillRect(X(n.t + i / (n.F.length - 1) * n.d), Y(n.F[i]) - 1.5, Math.max(1.2, pw / len / 600 * 2), 3); }
+    g.globalAlpha = 1; } });
+  if (playT !== undefined && playT >= 0 && playT <= len) { g.strokeStyle = tok('--wave'); g.beginPath(); g.moveTo(X(playT), T); g.lineTo(X(playT), T + ph); g.stroke(); }
+}
+// the builder
+function bdRefresh() {
+  const b = BIRDS[BSEL]; PSEL = clamp(PSEL, 0, b.song.parts.length - 1);
+  $('bd_birds').innerHTML = BIRDS.map((x, i) => `<button data-i="${i}" aria-pressed="${i === BSEL}"><span style="color:${x.body}">●</span> ${x.name} <span class="eyebrow">like a ${x.like}</span></button>`).join('');
+  $('bd_song').innerHTML = b.song.parts.map((p, i) => `<button data-p="${i}" aria-pressed="${i === PSEL}">${LEX[p.el]}${p.x > 1 ? ' ×' + p.x : ''}</button>`).join('') || '<span class="note">silent: add a part</span>';
+  $('bd_lex').innerHTML = Object.entries(LEX).map(([k, v]) => `<button data-l="${k}">+ ${v}</button>`).join('');
+  const p = b.song.parts[PSEL];
+  ['bd_f', 'bd_d', 'bd_r', 'bd_x', 'bd_left', 'bd_right', 'bd_del'].forEach(id => { $(id).disabled = !p; });
+  if (p) { $('bd_f').value = p.f; $('bd_d').value = p.d; $('bd_r').value = p.r; $('bd_x').value = p.x; $('bd_selLab').textContent = `Selected part: ${LEX[p.el].toLowerCase()}`; }
+  const R = b.song.rules; $('bd_accel').value = R.accel; $('bd_vary').value = R.vary; $('bd_drift').value = R.drift; $('bd_gap').value = R.gap;
+  bdLabels(); drawSono();
+}
+function bdLabels() {
+  $('bd_fV').textContent = `${(+$('bd_f').value).toFixed(1)} kHz`; $('bd_dV').textContent = `${Math.round(+$('bd_d').value * 1000)} ms`; $('bd_rV').textContent = `${$('bd_r').value} per s`; $('bd_xV').textContent = `×${$('bd_x').value}`;
+  $('bd_accelV').textContent = `${Math.round($('bd_accel').value * 100)}%`; $('bd_varyV').textContent = `${Math.round($('bd_vary').value * 100)}%`; $('bd_driftV').textContent = (+$('bd_drift').value > 0 ? 'up ' : +$('bd_drift').value < 0 ? 'down ' : '') + Math.abs(Math.round($('bd_drift').value * 15)) + '%'; $('bd_gapV').textContent = `${Math.round($('bd_gap').value * 1000)} ms`;
+}
+$('bd_birds').addEventListener('click', e => { const t = e.target.closest('[data-i]'); if (!t) return; BSEL = +t.dataset.i; PSEL = 0; bdRefresh(); });
+$('bd_song').addEventListener('click', e => { const t = e.target.closest('[data-p]'); if (!t) return; PSEL = +t.dataset.p; bdRefresh(); });
+$('bd_lex').addEventListener('click', e => { const t = e.target.closest('[data-l]'); if (!t) return; const el = t.dataset.l, parts = BIRDS[BSEL].song.parts;
+  const DEF = { chip: [4.5, 0.05], trill: [4, 0.6], rattle: [3, 0.6], buzz: [5, 0.35], whoop: [2.5, 0.3], cry: [3, 0.4], warble: [3.5, 0.45] }[el] || [3.2, 0.25];
+  parts.splice(PSEL + 1, 0, { el, f: DEF[0], d: DEF[1], r: el === 'rattle' ? 28 : 16, x: 1 }); PSEL = Math.min(PSEL + 1, parts.length - 1); bdRefresh(); });
+['bd_f', 'bd_d', 'bd_r', 'bd_x'].forEach(id => $(id).addEventListener('input', () => { const p = BIRDS[BSEL].song.parts[PSEL]; if (!p) return; p.f = +$('bd_f').value; p.d = +$('bd_d').value; p.r = +$('bd_r').value; p.x = +$('bd_x').value;
+  $('bd_song').querySelectorAll('button')[PSEL].textContent = LEX[p.el] + (p.x > 1 ? ' ×' + p.x : ''); bdLabels(); drawSono(); }));
+['bd_accel', 'bd_vary', 'bd_drift', 'bd_gap'].forEach(id => $(id).addEventListener('input', () => { const R = BIRDS[BSEL].song.rules; R.accel = +$('bd_accel').value; R.vary = +$('bd_vary').value; R.drift = +$('bd_drift').value; R.gap = +$('bd_gap').value; bdLabels(); drawSono(); }));
+$('bd_left').onclick = () => { const a = BIRDS[BSEL].song.parts; if (PSEL > 0) { [a[PSEL - 1], a[PSEL]] = [a[PSEL], a[PSEL - 1]]; PSEL--; bdRefresh(); } };
+$('bd_right').onclick = () => { const a = BIRDS[BSEL].song.parts; if (PSEL < a.length - 1) { [a[PSEL + 1], a[PSEL]] = [a[PSEL], a[PSEL + 1]]; PSEL++; bdRefresh(); } };
+$('bd_del').onclick = () => { BIRDS[BSEL].song.parts.splice(PSEL, 1); PSEL = Math.max(0, PSEL - 1); bdRefresh(); };
+$('bd_reset').onclick = () => { BIRDS[BSEL].song = JSON.parse(JSON.stringify(BIRDS[BSEL].home)); PSEL = 0; bdRefresh(); };
+let sonoPlay = null;
+$('bd_play').onclick = () => { try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.resume) AC.resume(); } catch (e) { return; }
+  const b = BIRDS[BSEL], t0 = AC.currentTime + 0.05; if (!birdBus) sing(b, t0, 0, 0); const keep = birdBus.gain.value;
+  birdBus.gain.cancelScheduledValues(AC.currentTime); birdBus.gain.setValueAtTime(0.5, AC.currentTime);
+  const len = sing(b, t0, 0, 0.4); b.until = performance.now() + len * 1000; turnFree = t0 + len + 0.4; sonoPlay = { t0: performance.now() + 50, len }; };
+// the divider: drag on the street, or use the slider under it
+let dragging = false;
+function scapeFromEvent(e) { const r = $('scene').getBoundingClientRect(); SCAPE = clamp(1 - (e.clientX - r.left) / r.width, 0, 1); $('scape').value = Math.round(SCAPE * 100); scapeLabel(); }
+function scapeLabel() { $('scapeV').textContent = SCAPE < 0.1 ? 'leaf blower street' : SCAPE > 0.9 ? 'soundscape' : `${Math.round(SCAPE * 100)}% soundscape`; }
+$('scene').addEventListener('pointerdown', e => { const r = $('scene').getBoundingClientRect(), xs = r.left + (1 - SCAPE) * r.width; if (Math.abs(e.clientX - xs) < 28) { dragging = true; $('scene').setPointerCapture(e.pointerId); scapeFromEvent(e); } });
+$('scene').addEventListener('pointermove', e => { const r = $('scene').getBoundingClientRect(), xs = r.left + (1 - SCAPE) * r.width; $('scene').style.cursor = dragging || Math.abs(e.clientX - xs) < 28 ? 'ew-resize' : ''; if (dragging) scapeFromEvent(e); });
+['pointerup', 'pointercancel'].forEach(t => $('scene').addEventListener(t, () => { dragging = false; }));
+$('scape').addEventListener('input', () => { SCAPE = +$('scape').value / 100; scapeLabel(); });
 function startAudio() {
   try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.resume) AC.resume(); } catch (e) { return false; }
   stopAudio(); const lis = L(), mx = MIX(), now = AC.currentTime;
   const comp = AC.createDynamicsCompressor(); comp.connect(AC.destination);
   comp.threshold.value = -3; comp.knee.value = 0; comp.ratio.value = 20; comp.attack.value = 0.002; comp.release.value = 0.15;   // a limiter: loud, but no clipping
-  const master = AC.createGain(); master.gain.value = 0; master.connect(comp);
+  const scapeG = AC.createGain(); scapeG.gain.value = 1 - 0.97 * SCAPE; scapeG.connect(comp);
+  const master = AC.createGain(); master.gain.value = 0; master.connect(scapeG);
   const win = AC.createBiquadFilter(); win.type = 'lowpass'; win.frequency.value = lis.closed ? 450 : 12000; win.connect(master);
   { const E = echoAt(lis.dist, lis), dl = AC.createDelay(2), fb = AC.createGain(), damp = AC.createBiquadFilter(), eg = AC.createGain();
     dl.delayTime.value = E.delay; damp.type = 'lowpass'; damp.frequency.value = 1200 + 7000 * lis.hard; fb.gain.value = 0.45 * lis.hard * Math.sqrt(E.R);
@@ -1201,7 +1387,7 @@ function startAudio() {
       for (let i = 0; i < n; i++) { lp += k * ((Math.random() * 2 - 1) - lp); ch[i] = lp * Math.pow(10, -3 * i / n); } }
     conv.buffer = ir; const rg = AC.createGain(); rg.gain.value = 0.08 + 0.3 * lis.hard; win.connect(conv); conv.connect(rg); rg.connect(master);
     nodes.push(dl, fb, damp, eg, conv, rg); }
-  nodes.push(comp, master, win); AUD = { per: {} };
+  nodes.push(comp, master, win, scapeG); AUD = { per: {}, scapeG };
   const tot = Math.max(1, mx.engine + mx.sine + mx.square + mx.saw);
   MACH.forEach(m => {
     const sp = spectrum(m), f0 = sp[0][0], oscs = [];
@@ -1457,7 +1643,9 @@ function frame(now) {
   const dt = Math.min(0.1, (now - last) / 1000); last = now;
   if (playing) { tScene += dt; minute += dt * (minute > VISIT ? AFTER_SPEED : 1); if (minute > TRACE_END + 2) { minute = 0; } stepParticles(dt); }
   if (minute > VISIT && $('listen').getAttribute('aria-pressed') === 'true') $('listen').click();
-  thrStep(dt); callTick(now);
+  thrStep(dt); callTick(now); birdTick(now);
+  if (AUD && AUD.scapeG && AC) AUD.scapeG.gain.setTargetAtTime(1 - 0.97 * SCAPE, AC.currentTime, 0.08);
+  if (sonoPlay) { const tt = (now - sonoPlay.t0) / 1000; drawSono(tt); if (tt > sonoPlay.len + 0.2) { sonoPlay = null; drawSono(); } }
   if (PASS) { if (passX() === null) endPass(false); else audioTick(); } else if ($('listen').getAttribute('aria-pressed') === 'true') audioTick();   // the crew left: silence
   drawScene(SIM);
   if (now - lastPanel > 250) { lastPanel = now; audioTick(); hud(); drawTrace(SIM); drawBP(SIM); drawWave(); drawSpec(); }
@@ -1467,7 +1655,7 @@ const redraw = () => { drawTrace(SIM); drawBP(SIM); drawWave(); drawSpec(); outc
 window.addEventListener('resize', redraw);
 try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redraw); } catch (e) {}
 new MutationObserver(redraw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-bpMapInit(); minute = 24;                                             // open mid-visit, with both machines running
+bdRefresh(); scapeLabel(); bpMapInit(); minute = 24;                                             // open mid-visit, with both machines running
 recompute(); drawScene(SIM);
 $('lt_name').value = RCP[$('lt_to').value].name; ltAsks($('lt_to').value); letter(); countSummary();
 $('play').textContent = playing ? 'Pause the morning' : 'Run the morning'; $('play').setAttribute('aria-pressed', playing);

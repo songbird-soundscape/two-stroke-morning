@@ -10,8 +10,9 @@ What's inside:
 - Fuel, CO₂ and smog, and the crew's own hearing
 - A sound lab and a music panel: engine notes, keys, scales and a perfect-pitch game
 - Lawn to prairie: a time lapse of native plants growing in, roots and all
+- A split street: drag from the leaf blower to a soundscape of birds, and build their songs from trills, warbles, whoops and cries
 - A letter writer for your landlord, council or anyone else, printable to sign
 
 One self-contained HTML file. No tracking, no accounts. Every model is simplified, and the page lists its sources.
 
-*Every lawn was a prairie once.*
+*Every lawn was a prairie once.* Check back for more fun apps.
