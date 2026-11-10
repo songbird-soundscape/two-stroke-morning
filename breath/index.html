@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bells and Breath</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&display=swap">
+<style>
+:root { --bg: #ecebe3; --panel: #fbfaf5; --ink: #1d211b; --muted: #5d6458; --line: #d4d2c6; --chip: #e4e2d6; --accent: #8a5a9e; --calm: #2b8a3e; --warm: #c4500a; --breath: #1c7ed6;
+  --f-pixel: "Silkscreen", "Courier New", monospace; --f-body: "Atkinson Hyperlegible", system-ui, sans-serif; --f-mono: "DM Mono", ui-monospace, Menlo, monospace; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #141613; --panel: #1b1e19; --ink: #e6e8e1; --muted: #a0a898; --line: #30352d; --chip: #252923; --accent: #c49be0; --calm: #5cc274; --warm: #ff8a3d; --breath: #5aa9ff; } }
+:root[data-theme="dark"] { --bg: #141613; --panel: #1b1e19; --ink: #e6e8e1; --muted: #a0a898; --line: #30352d; --chip: #252923; --accent: #c49be0; --calm: #5cc274; --warm: #ff8a3d; --breath: #5aa9ff; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 var(--f-body); padding: 20px max(16px, env(safe-area-inset-left)) 48px; }
+.wrap { max-width: 1100px; margin: 0 auto; display: grid; gap: 18px; }
+h1 { font: 700 clamp(26px, 5vw, 42px)/1 var(--f-pixel); margin: 0; letter-spacing: 1px; } h1 span { color: var(--accent); }
+h2 { font: 700 15px/1.2 var(--f-pixel); letter-spacing: 1px; margin: 0; text-transform: uppercase; }
+.eyebrow { font: 500 11.5px/1.2 var(--f-mono); text-transform: uppercase; letter-spacing: 1.2px; color: var(--muted); }
+.note { font-size: 14px; color: var(--muted); margin: 0; max-width: 78ch; } .note b { color: var(--ink); }
+.bench { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 12px; min-width: 0; }
+.bench > header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 12px; }
+.cols { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 860px) { .cols { grid-template-columns: 1fr; } }
+.btns { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+button, select { font: 700 13.5px var(--f-body); color: var(--ink); background: var(--chip); border: 1px solid var(--line); border-radius: 8px; padding: 7px 12px; cursor: pointer; }
+button:hover { border-color: var(--accent); } button.go, button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--panel); }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.stage { background: #10140f; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+#fig { display: block; width: 100%; image-rendering: pixelated; }
+.cue { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; align-items: center; }
+.breathword { font: 700 26px/1 var(--f-pixel); color: var(--breath); min-width: 4.5em; }
+.steptext { font-size: 17px; }
+.row { display: grid; grid-template-columns: 1fr auto; gap: 1px 8px; align-items: center; }
+.row input[type=range] { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); }
+.val { font: 500 12.5px var(--f-mono); color: var(--muted); }
+canvas.plot { width: 100%; display: block; }
+.ex { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+.ex button { text-align: left; padding: 8px 10px; } .ex button small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
+.ex button[aria-pressed="true"] small { color: var(--panel); }
+.refs { font-size: 12.5px; color: var(--muted); display: grid; gap: 4px; }
+a { color: var(--warm); }
+</style></head><body>
+<div class="wrap">
+  <header style="display:grid;gap:8px">
+    <h1>Bells <span>&amp;</span> Breath</h1>
+    <p class="note">A guided practice that keeps the meditation bells going: a welcome bell when you begin, then a bell on every hour and half hour. Pick an exercise, follow the little figure and the breath cue, and go gently: skip anything that hurts, and check with a doctor first if you're pregnant, have high blood pressure, glaucoma, or back or joint trouble. <a href="../">Back to Two-Stroke Morning</a></p>
+    <div class="btns"><button id="bellNow">Ring the bell</button><span class="eyebrow" id="bellNext"></span></div>
+  </header>
+
+  <section class="bench" aria-labelledby="hPractice">
+    <header><h2 id="hPractice">The practice</h2><span class="eyebrow">breathe quietly; just notice the breath</span></header>
+    <div class="ex" id="exList" role="group" aria-label="Exercises"></div>
+    <div class="cols">
+      <div style="display:grid;gap:10px;min-width:0">
+        <div class="stage"><canvas id="fig" width="960" height="560" aria-label="A pixel figure demonstrating the exercise, with a breathing circle"></canvas></div>
+        <div class="btns"><button class="go" id="play">Pause</button><button id="prev">◀ Step</button><button id="next">Step ▶</button><button id="restart">From the top</button>
+          <label for="pace" class="eyebrow">Pace</label><select id="pace"><option value="1.4">slow</option><option value="1" selected>steady</option><option value="0.75">brisk</option></select></div>
+      </div>
+      <div style="display:grid;gap:10px;min-width:0">
+        <div class="eyebrow" id="exName"></div>
+        <div class="cue"><div class="breathword" id="breathWord"></div><div class="steptext" id="stepText"></div></div>
+        <div class="eyebrow" id="stepCount"></div>
+        <p class="note" id="exNote"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="bench" aria-labelledby="hWhy">
+    <header><h2 id="hWhy">Why it helps: holobiotic living</h2><span class="eyebrow">practice, fresh and fermented food, and the stress hormone</span></header>
+    <p class="note"><b>Holobiotic living.</b> Each of us is a holobiont: a body plus the trillions of microbes living in and on it, working as one. Movement, slow breath, fresh plants and fermented foods look after both halves at once.</p>
+    <div class="cols">
+      <div style="display:grid;gap:10px;min-width:0">
+        <div class="eyebrow">A day of cortisol: before and after weeks of practice (illustrative)</div>
+        <canvas class="plot" id="cCort" height="240" aria-label="Daily cortisol curve before and after regular practice"></canvas>
+        <div class="eyebrow">Inflammation markers (illustrative index)</div>
+        <canvas class="plot" id="cInfl" height="90" aria-label="Inflammation marker index with and without fermented and fresh foods"></canvas>
+      </div>
+      <div style="display:grid;gap:10px;min-width:0">
+        <div class="row"><label for="weeks">Weeks of practice</label><span class="val" id="weeksV"></span><input id="weeks" type="range" min="0" max="16" step="1" value="8"></div>
+        <div class="row"><label for="days">Days a week</label><span class="val" id="daysV"></span><input id="days" type="range" min="0" max="7" step="1" value="5"></div>
+        <div class="row"><label for="ferm">Fermented foods, servings a day (yogurt, kefir, kimchi, sauerkraut, kombucha)</label><span class="val" id="fermV"></span><input id="ferm" type="range" min="0" max="6" step="1" value="2"></div>
+        <div class="row"><label for="veg">Fresh vegetables and fruit, servings a day</label><span class="val" id="vegV"></span><input id="veg" type="range" min="0" max="10" step="1" value="5"></div>
+        <p class="note" id="whyNote"></p>
+        <p class="note"><b>How this is drawn.</b> Cortisol peaks about half an hour after waking and falls through the day. In a meta-analysis of randomised trials, yoga and mindfulness practice lowered cortisol and blood pressure, with small to moderate effects (Pascoe, Thompson &amp; Ski 2017); here the reduction grows with weeks and days of practice to at most about 15% through the day. In a ten-week trial, a diet high in fermented foods raised gut-microbe diversity and lowered many inflammation markers (Wastyk et al. 2021); fresh produce brings fibre that feeds those microbes. These are illustrative sizes in the direction of the evidence, not a prediction for you.</p>
+      </div>
+    </div>
+    <div class="refs">
+      <div>Pascoe, Thompson &amp; Ski (2017), Yoga, mindfulness-based stress reduction and stress-related physiological measures: a meta-analysis, <i>Psychoneuroendocrinology</i> 86:152. Wastyk et al. (2021), Gut-microbiota-targeted diets modulate human immune status, <i>Cell</i> 184:4137. Bernardi et al. (2001), Effect of rosary prayer and yoga mantras on autonomic cardiovascular rhythms, <i>BMJ</i> 323:1446. Zaccaro et al. (2018), How breath-control can change your life: a systematic review on psycho-physiological correlates of slow breathing, <i>Front. Hum. Neurosci.</i> 12:353.</div>
+      <div>The lazy eight and the cross-crawl come from movement-education traditions; claims that they improve learning are not well supported (Hyatt 2007, <i>J. Learn. Disabil.</i> 40:117), so they're offered here simply as a pleasant way to wake up the body and eyes.</div>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id), tok = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim(), clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const ease = u => u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+
+// ================= bells: a welcome on the first click, then every :00 and :30 =================
+let AC = null;
+const BELL = [[1, 1, 9], [2.71, 0.5, 6], [5.15, 0.28, 4], [8.42, 0.14, 2.5], [12.4, 0.06, 1.5]];
+const HALF = { vol: 0.22, dets: [0, 1.8], wobble: 0, stretch: 1 }, OPEN = { vol: 0.12, dets: [0, 2.6, -3.9], wobble: 0.35, stretch: 1.4 };
+function ring(O = HALF) {
+  try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.resume) AC.resume(); } catch (e) { return; }
+  const t = AC.currentTime + 0.02, out = AC.createGain(); out.gain.value = O.vol; out.connect(AC.destination);
+  if (O.wobble) { const l = AC.createOscillator(), lg = AC.createGain(); l.frequency.value = 2.3; lg.gain.value = O.vol * O.wobble; l.connect(lg); lg.connect(out.gain); l.start(t); l.stop(t + 9 * O.stretch); }
+  BELL.forEach(([r, a, d0]) => { const d = d0 * O.stretch; O.dets.forEach(det => { const o = AC.createOscillator(), g = AC.createGain(); o.frequency.value = 196 * r + det;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(a * 0.5 / Math.sqrt(O.dets.length / 2), t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + d); o.connect(g); g.connect(out); o.start(t); o.stop(t + d + 0.1); }); });
+}
+const welcome = () => ring(OPEN);
+document.addEventListener('pointerdown', welcome, { once: true, capture: true }); document.addEventListener('keydown', welcome, { once: true, capture: true });
+$('bellNow').onclick = () => ring(HALF);
+let bellSlot = -1;
+const nextBellAt = (n = 1) => { const d = new Date(); d.setSeconds(0, 0); const m = d.getMinutes(); d.setMinutes(m < 30 ? 30 : 60); d.setMinutes(d.getMinutes() + 30 * (n - 1)); return d; };
+function bellTick() {
+  const d = new Date(), slot = d.getHours() * 2 + (d.getMinutes() >= 30 ? 1 : 0); if (bellSlot < 0) bellSlot = slot;
+  if (slot !== bellSlot) { bellSlot = slot; if (AC && AC.state === 'running') ring(HALF); }
+  const left = Math.ceil((nextBellAt() - d) / 60000); $('bellNext').textContent = `next bell in ${left} min`;
+}
+setInterval(bellTick, 1000); bellTick();
+
+// ================= the figure =================
+// side view: angles in degrees. Torso t: 0 upright, + leans forward. Limbs (absolute): 0 points down, + points forward (the way the figure faces), 180 points up.
+// legs: f = front leg, b = back leg; [thigh, shin]. arms: [upper, forearm]. base: which points rest on the ground ('feet' or 'all').
+const S = (t, arm, f, b, base = 'feet', extra = {}) => ({ view: 'side', t, arm, f, b, base, ...extra });
+const P = {
+  stand: S(0, [4, 4], [2, 2], [-2, -2]),
+  prayer: S(0, [25, 150], [2, 2], [-2, -2]),
+  armsUp: S(-14, [192, 196], [3, 3], [-3, -3]),
+  fold: S(155, [8, 4], [-6, 6], [-6, 6]),
+  half: S(95, [-12, -6], [-4, 4], [-4, 4]),
+  deep: S(170, [-10, 4], [-8, 8], [-8, 8]),
+  lunge: S(28, [12, -6], [82, 2], [-25, -84], 'all'),           // ashwa sanchalanasana: right leg back
+  plank: S(64, [0, 0], [-64, -64], [-64, -64], 'all'),       // shoulders over hands, one straight line to the heels
+  eight: S(112, [-150, 2], [-62, -90], [-62, -90], 'all'),     // ashtanga namaskara: knees, chest, chin to the floor
+  cobra: S(42, [-40, 10], [-84, -90], [-84, -90], 'all'),
+  dog: S(132, [48, 48], [-24, -24], [-24, -24], 'all'),
+  seated: S(0, [18, 75], [86, -92], [84, -96], 'all', { seat: true }),
+};
+// front view: angles in screen terms: 0 points down, + points to the right of the screen, 180 up. armL/legL are on the screen's left (the figure's right).
+const F = (armL, armR, legL, legR, extra = {}) => ({ view: 'front', armL, armR, legL, legR, ...extra });
+const PF = {
+  stand: F([-6, -4], [6, 4], [-3, -3], [3, 3]),
+  palms: F([-60, -95], [60, 95], [-3, -3], [3, 3]),           // palms up, arms out
+  up: F([-170, -175], [170, 175], [-3, -3], [3, 3]),
+  drop: F([-4, -2], [4, 2], [-3, -3], [3, 3]),
+  thumb: F([-6, -4], [30, 150], [-3, -3], [3, 3], { thumb: true }),
+  crossA: F([28, 95], [8, 4], [-3, -3], [205, 0], { lean: 2 }),     // figure's right elbow to its left knee
+  crossB: F([-8, -4], [-28, -95], [155, 0], [3, 3], { lean: -2 }),
+};
+const LEN = { thigh: 12, shin: 12, torso: 17, upper: 9, fore: 9, head: 4 };
+const fig = $('fig'), off = document.createElement('canvas'); off.width = 160; off.height = 94; const g = off.getContext('2d'); const GROUND = 84;
+const lerp = (a, b, u) => a + (b - a) * u, lerpA = (a, b, u) => a.map((v, i) => lerp(v, b[i], u));
+function mixPose(A, B, u) {
+  if (!B || A.view !== B.view) return A; const o = { ...B };
+  if (A.view === 'side') { o.t = lerp(A.t, B.t, u); o.arm = lerpA(A.arm, B.arm, u); o.f = lerpA(A.f, B.f, u); o.b = lerpA(A.b, B.b, u); }
+  else { ['armL', 'armR', 'legL', 'legR'].forEach(k => { o[k] = lerpA(A[k], B[k], u); }); o.lean = lerp(A.lean || 0, B.lean || 0, u); }
+  return o;
+}
+const rad = d => d * Math.PI / 180, limb = (p, ang, L) => [p[0] + Math.sin(rad(ang)) * L, p[1] + Math.cos(rad(ang)) * L];
+function sidePts(p) {
+  const hip = [0, 0], sh = [Math.sin(rad(p.t)) * LEN.torso, -Math.cos(rad(p.t)) * LEN.torso], head = [sh[0] + Math.sin(rad(p.t)) * 6, sh[1] - Math.cos(rad(p.t)) * 6];
+  const el = limb(sh, p.arm[0], LEN.upper), ha = limb(el, p.arm[1], LEN.fore);
+  const kf = limb(hip, p.f[0], LEN.thigh), ff = limb(kf, p.f[1], LEN.shin), kb = limb(hip, p.b[0], LEN.thigh), fb = limb(kb, p.b[1], LEN.shin);
+  return { hip, sh, head, el, ha, kf, ff, kb, fb };
+}
+function drawLine(a, b, w, col) { g.strokeStyle = col; g.lineWidth = w; g.lineCap = 'round'; g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); }
+const SKIN = '#e0ac7d', SHIRT = '#8a5a9e', PANTS = '#3b4a5c', HAIR = '#3b2a20';
+function drawSide(p, cx) {
+  const q = sidePts(p), pts = Object.values(q), feet = [q.ff, q.fb], pool = p.base === 'all' ? pts.concat([[q.head[0], q.head[1] + LEN.head]]) : feet;
+  const dy = GROUND - Math.max(...pool.map(v => v[1])), T = v => [v[0] + cx, v[1] + dy];
+  if (p.seat) { g.fillStyle = '#6b4a2e'; g.fillRect(cx - 12, GROUND - 2, 24, 3); }                 // a cushion
+  drawLine(T(q.hip), T(q.kb), 4, PANTS); drawLine(T(q.kb), T(q.fb), 4, PANTS);
+  drawLine(T(q.hip), T(q.sh), 6, SHIRT); drawLine(T(q.sh), T(q.el), 3, SHIRT); drawLine(T(q.el), T(q.ha), 3, SKIN);
+  drawLine(T(q.hip), T(q.kf), 4, '#4a5c70'); drawLine(T(q.kf), T(q.ff), 4, '#4a5c70');
+  const h = T(q.head); g.fillStyle = SKIN; g.beginPath(); g.arc(h[0], h[1], LEN.head, 0, 2 * Math.PI); g.fill(); g.fillStyle = HAIR; g.beginPath(); g.arc(h[0], h[1], LEN.head, Math.PI * 0.95 + rad(p.t), Math.PI * 1.9 + rad(p.t)); g.fill();
+  return { dy, q, T };
+}
+function drawFront(p, cx, now, extra) {
+  const lean = p.lean || 0, hipC = [cx + lean, GROUND - LEN.thigh - LEN.shin], shC = [cx + lean * 1.6, hipC[1] - LEN.torso], headC = [shC[0], shC[1] - 7];
+  const shL = [shC[0] - 6, shC[1]], shR = [shC[0] + 6, shC[1]], hipL = [hipC[0] - 4, hipC[1]], hipR = [hipC[0] + 4, hipC[1]];
+  const legPts = (h, a) => { const k = limb(h, a[0], a[0] > 100 || a[0] < -100 ? LEN.thigh * 0.55 : LEN.thigh), f = limb(k, a[1], LEN.shin); return [k, f]; };
+  const [kL, fL] = legPts(hipL, p.legL), [kR, fR] = legPts(hipR, p.legR);
+  drawLine(hipL, kL, 4, PANTS); drawLine(kL, fL, 4, PANTS); drawLine(hipR, kR, 4, PANTS); drawLine(kR, fR, 4, PANTS);
+  g.fillStyle = SHIRT; g.fillRect(shL[0] - 1, shC[1] - 1, 14, LEN.torso + 2);
+  const arm = (s, a, shake) => { const e = limb(s, a[0] + shake, LEN.upper), h = limb(e, a[1] + shake, LEN.fore); drawLine(s, e, 3, SHIRT); drawLine(e, h, 3, SKIN); return h; };
+  const sh = extra.shake ? Math.sin(now / 55) * 7 : 0, bob = extra.shake ? Math.sin(now / 70) * 1.2 : 0;
+  shL[1] += bob; shR[1] -= bob;
+  let handR;
+  if (p.thumb && extra.eight) {                               // the arm reaches forward; the thumb traces a sideways eight in front of the face
+    const u = extra.eight, tx = headC[0] + Math.sin(u) * 13, ty = headC[1] + 2 + Math.sin(2 * u) * 4.5;
+    g.strokeStyle = 'rgba(255,216,102,0.35)'; g.lineWidth = 1; g.beginPath(); for (let k = 0; k <= 60; k++) { const v = k / 60 * 2 * Math.PI, x = headC[0] + Math.sin(v) * 13, y = headC[1] + 2 + Math.sin(2 * v) * 4.5; k ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke();
+    arm(shL, p.armL, 0); drawLine(shR, [(shR[0] + tx) / 2 + 3, shR[1] + 5], 3, SHIRT); drawLine([(shR[0] + tx) / 2 + 3, shR[1] + 5], [tx, ty + 2], 3, SKIN);
+    g.fillStyle = '#ffd866'; g.fillRect(Math.round(tx) - 1, Math.round(ty) - 1, 2, 3); handR = [tx, ty];
+  } else { arm(shL, p.armL, -sh); handR = arm(shR, p.armR, sh); }
+  g.fillStyle = SKIN; g.beginPath(); g.arc(headC[0], headC[1], LEN.head + 1, 0, 2 * Math.PI); g.fill(); g.fillStyle = HAIR; g.beginPath(); g.arc(headC[0], headC[1], LEN.head + 1, Math.PI, 2 * Math.PI); g.fill();
+  // eyes: they follow the thumb during the lazy eight, otherwise look ahead
+  const look = p.thumb && extra.eight ? [clamp((handR[0] - headC[0]) / 10, -1, 1), clamp((handR[1] - headC[1]) / 6, -1, 1)] : [0, 0];
+  g.fillStyle = '#ffffff'; g.fillRect(headC[0] - 3, headC[1] - 0.5, 2, 2); g.fillRect(headC[0] + 1, headC[1] - 0.5, 2, 2);
+  g.fillStyle = '#111'; g.fillRect(Math.round(headC[0] - 2.5 + look[0] * 0.6), Math.round(headC[1] + look[1] * 0.5), 1, 1); g.fillRect(Math.round(headC[0] + 1.5 + look[0] * 0.6), Math.round(headC[1] + look[1] * 0.5), 1, 1);
+  g.fillStyle = '#b55a4a'; g.fillRect(headC[0] - 1, headC[1] + 2.5, 3, 1);   // a small smile helps the breath
+}
+function drawBreathCircle(word, u) {                          // a circle that fills on the in-breath and empties on the out-breath
+  const cx = 138, cy = 30, rMin = 5, rMax = 15; let r = rMin;
+  if (word === 'in') r = lerp(rMin, rMax, ease(u)); else if (word === 'out') r = lerp(rMax, rMin, ease(u)); else if (word === 'hold') r = rMax; else if (word === 'rest') r = rMin;
+  g.strokeStyle = 'rgba(90,169,255,0.4)'; g.lineWidth = 1; g.beginPath(); g.arc(cx, cy, rMax, 0, 2 * Math.PI); g.stroke();
+  g.fillStyle = 'rgba(90,169,255,0.55)'; g.beginPath(); g.arc(cx, cy, r, 0, 2 * Math.PI); g.fill();
+}
+function drawIncense(frac, now) {                             // burns down from the start of the sit to the target bell
+  const x = 22, top = 46, full = 34, len = full * (1 - clamp(frac, 0, 1));
+  g.fillStyle = '#6b4a2e'; g.fillRect(x - 4, GROUND - 4, 9, 4); g.fillStyle = '#8a6a4a'; g.fillRect(x, GROUND - 4 - len, 1, len);
+  if (len > 0.5) { g.fillStyle = '#ff7a2a'; g.fillRect(x, GROUND - 5 - len, 1, 1);
+    for (let k = 0; k < 14; k++) { const yy = GROUND - 7 - len - k * 2.2, xx = x + Math.sin(now / 600 + k * 0.7) * (k * 0.35); g.fillStyle = `rgba(200,200,210,${0.5 - k * 0.03})`; g.fillRect(Math.round(xx), Math.round(yy), 1, 2); } }
+}
+
+// ================= the exercises =================
+// each step: pose (or a pair to move between), breath cue, seconds, and words
+const st = (pose, breath, sec, text, more = {}) => ({ pose, breath, sec, text, ...more });
+const EX = [
+  { id: 'arrive', name: 'Arrive', sub: 'stand, reach, fold', rounds: 3, note: 'Feet under your shoulders, weight even. Breathe in as you open and rise, out as you fold. Let the breath be quiet: no need to force it, just notice it.',
+    steps: [st(P.stand, 'rest', 3, 'Stand tall, feet under your shoulders, head level. Soften your face; a small smile helps.'),
+      st(P.armsUp, 'in', 3, 'Sweep your arms up quickly and reach back a little.'),
+      st(P.fold, 'out', 4, 'Fold forward all the way down, hands toward the ground. Knees can bend.'),
+      st(P.half, 'in', 3, 'Rise halfway: a long, flat back, hands on your shins.'),
+      st(P.deep, 'out', 4, 'Fold again and let it deepen.'),
+      st(P.armsUp, 'in', 4, 'Come all the way up, arms rising overhead.'),
+      st(P.stand, 'out', 3, 'Lower your arms. Stand and notice your breath.')] },
+  { id: 'shake', name: 'Shake it out', sub: 'palms, drop, shake', rounds: 3, note: 'Firm feet. Let your arms fall heavily, as if someone cut the strings, then shake the shoulders loose.',
+    steps: [st(PF.stand, 'rest', 2, 'Stand firm-footed.'), st(PF.palms, 'in', 3, 'Turn your palms up and raise your hands.'), st(PF.up, 'in', 2, 'All the way up.'),
+      st(PF.drop, 'out', 2, 'Drop the weight of your arms.'), st(PF.drop, 'out', 4, 'Shake your shoulders out, loose and easy.', { shake: true })] },
+  { id: 'eight', name: 'The lazy eight', sub: 'eyes follow the thumb', rounds: 1, note: 'Hold your head still. Only your eyes move. Go slowly enough that your eyes never lose the thumb; switch hands halfway if you like.',
+    steps: [st(PF.thumb, 'rest', 3, 'Hold your thumb up at arm\'s length, in front of your face.'),
+      st(PF.thumb, '', 16, 'Draw a sideways figure eight, ∞, so your thumb crosses the middle of your view. Follow it with your eyes only.', { eight: 2 }),
+      st(PF.thumb, '', 16, 'Now the other way round.', { eight: -2 }), st(PF.drop, 'out', 3, 'Rest your arm. Blink a few times.')] },
+  { id: 'cross', name: 'Cross-crawl', sub: 'elbow to opposite knee', rounds: 8, note: 'March in place without moving from your spot, crossing the middle each time: right elbow to left knee, then left elbow to right knee. Almost a slow dance.',
+    steps: [st(PF.crossA, 'out', 1.4, 'Right elbow to left knee.'), st(PF.stand, 'in', 0.9, 'Back to centre.'), st(PF.crossB, 'out', 1.4, 'Left elbow to right knee.'), st(PF.stand, 'in', 0.9, 'Back to centre.')] },
+  { id: 'even', name: 'Pranayama: even breath', sub: 'about six a minute', rounds: 6, note: 'Breathe through the nose, quietly. About four counts in and six out comes to roughly six breaths a minute, the pace at which heart rate and blood-pressure rhythms fall into step (Bernardi et al. 2001). Never strain; if you feel light-headed, breathe normally.',
+    steps: [st(P.seated, 'in', 4, 'In through the nose, slowly, belly first.'), st(P.seated, 'out', 6, 'Out through the nose, slower still.')] },
+  { id: 'nadi', name: 'Pranayama: alternate nostrils', sub: 'nadi shodhana', rounds: 4, note: 'Use your right thumb to close the right nostril and your ring finger to close the left. Keep the breath soft and even; skip the pauses if they feel uncomfortable.',
+    steps: [st(P.seated, 'in', 4, 'Close the right nostril. Breathe in through the left.'), st(P.seated, 'hold', 2, 'Close both, a gentle pause.'), st(P.seated, 'out', 5, 'Open the right. Breathe out through the right.'),
+      st(P.seated, 'in', 4, 'Breathe in through the right.'), st(P.seated, 'hold', 2, 'Close both, a gentle pause.'), st(P.seated, 'out', 5, 'Open the left. Breathe out through the left.')] },
+  { id: 'sun', name: 'Sun salutation', sub: 'Surya Namaskar, 12 poses', rounds: 2, note: 'The traditional twelve-pose round. Step the right leg back in the first round and the left in the second. It moves quickly but needn\'t be hard: bend your knees, lower your knees in plank, and keep the breath smooth.',
+    steps: [st(P.prayer, 'out', 3, '1. Pranamasana, prayer pose: palms together at the chest.'), st(P.armsUp, 'in', 3, '2. Hasta Uttanasana, raised arms: reach up and slightly back.'),
+      st(P.fold, 'out', 3, '3. Padahastasana, hand to foot: fold forward, hands to the floor.'), st(P.lunge, 'in', 3, '4. Ashwa Sanchalanasana, equestrian: step one leg back, look up.'),
+      st(P.plank, 'hold', 3, '5. Dandasana, plank: step back into a straight line.'), st(P.eight, 'out', 3, '6. Ashtanga Namaskara, eight points: knees, chest and chin to the floor.'),
+      st(P.cobra, 'in', 3, '7. Bhujangasana, cobra: slide forward and lift the chest.'), st(P.dog, 'out', 4, '8. Parvatasana, mountain (downward dog): hips high, heels toward the floor.'),
+      st(P.lunge, 'in', 3, '9. Ashwa Sanchalanasana: step the same foot forward between the hands.'), st(P.fold, 'out', 3, '10. Padahastasana: bring the other foot forward and fold.'),
+      st(P.armsUp, 'in', 3, '11. Hasta Uttanasana: rise up, arms overhead.'), st(P.prayer, 'out', 3, '12. Pranamasana: palms back to the heart.')] },
+  { id: 'sit', name: 'Sit until the bell', sub: 'one bell or two', rounds: 1, sit: true, note: 'Sit comfortably, spine tall, hands on your knees. Light a stick of incense if you like: it burns down with the time and makes a quiet clock (never leave it burning unattended, and open a window). When the bell rings, sit on through to the next for a whole hour.',
+    steps: [st(P.seated, '', 1800, 'Sitting. Just listen to your breath. The bell will tell you when.')] },
+  { id: 'inv', name: 'Inversions', sub: 'ask a teacher', rounds: 1, note: 'Headstands, shoulder stands and other inversions are worth learning in person: ask your local yoga club or a teacher, and skip them with high blood pressure, glaucoma, neck trouble or in pregnancy.',
+    steps: [st(P.dog, 'rest', 6, 'Downward dog is as far upside down as we go here. For more, find a teacher.')] },
+];
+let EXI = 0, STEP = 0, ROUND = 0, stepStart = performance.now(), playing = true, sitStart = 0, sitTarget = 1;
+function setEx(i) { EXI = i; STEP = 0; ROUND = 0; stepStart = performance.now(); playing = true; $('play').textContent = 'Pause';
+  if (EX[i].sit) { sitStart = Date.now(); }
+  [...$('exList').children].forEach((b, k) => b.setAttribute('aria-pressed', k === i)); $('exName').textContent = EX[i].name; $('exNote').textContent = EX[i].note; text(); }
+function text() { const E = EX[EXI], S0 = E.steps[STEP]; let t = S0.text;
+  if (E.sit) { const target = nextBellAt(sitTarget); t += ` Next bell at ${target.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}.`; }
+  $('stepText').textContent = t; $('breathWord').textContent = { in: 'in', out: 'out', hold: 'pause', rest: '' }[S0.breath] || '';
+  $('stepCount').textContent = E.sit ? '' : `step ${STEP + 1} of ${E.steps.length}${E.rounds > 1 ? ` · round ${ROUND + 1} of ${E.rounds}` : ''}`; }
+$('exList').innerHTML = EX.map((e, i) => `<button data-i="${i}" aria-pressed="${i === 0}">${e.name}<small>${e.sub}</small></button>`).join('');
+$('exList').addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (b) setEx(+b.dataset.i); });
+$('play').onclick = () => { playing = !playing; $('play').textContent = playing ? 'Pause' : 'Play'; if (playing) stepStart = performance.now() - pausedAt; };
+let pausedAt = 0;
+const go = d => { const E = EX[EXI]; STEP += d; if (STEP >= E.steps.length) { STEP = 0; ROUND = (ROUND + 1) % E.rounds; } if (STEP < 0) STEP = E.steps.length - 1; stepStart = performance.now(); text(); };
+$('next').onclick = () => go(1); $('prev').onclick = () => go(-1); $('restart').onclick = () => setEx(EXI);
+const sitBtns = () => {};
+function frame(now) {
+  const E = EX[EXI], S0 = E.steps[STEP], pace = +$('pace').value, dur = S0.sec * pace * 1000; let el = now - stepStart;
+  if (!playing) { pausedAt = el; el = Math.min(el, dur); } else if (el >= dur && !E.sit) { go(1); el = 0; }
+  const u = clamp(el / dur, 0, 1), prev = E.steps[(STEP - 1 + E.steps.length) % E.steps.length];
+  let pose = mixPose(prev.pose, S0.pose, ease(clamp(u / 0.45, 0, 1)));
+  // the second round of the sun salutation steps the other leg back: swap the legs
+  if (E.id === 'sun' && ROUND % 2 === 1 && pose.view === 'side') pose = { ...pose, f: pose.b, b: pose.f };
+  g.clearRect(0, 0, 160, 94);
+  const sky = g.createLinearGradient(0, 0, 0, 94); sky.addColorStop(0, '#1b2433'); sky.addColorStop(1, '#2a3a2c'); g.fillStyle = sky; g.fillRect(0, 0, 160, 94);
+  g.fillStyle = '#3f6a3a'; g.fillRect(0, GROUND, 160, 10); g.fillStyle = '#4f7a42'; for (let x = 0; x < 160; x += 3) g.fillRect(x, GROUND, 1, 1);
+  g.fillStyle = '#c6a36a'; g.fillRect(48, GROUND - 1, 60, 2);   // the mat
+  const extra = {}; if (S0.shake) extra.shake = true; if (S0.eight) extra.eight = (S0.eight > 0 ? 1 : -1) * u * Math.PI * 2 * Math.abs(S0.eight);
+  if (pose.view === 'side') drawSide(pose, 78); else drawFront(pose, 78, now, extra);
+  if (E.sit) { const target = nextBellAt(sitTarget).getTime(), frac = (Date.now() - sitStart) / Math.max(1, target - sitStart); drawIncense(frac, now);
+    const left = Math.max(0, Math.ceil((target - Date.now()) / 60000)); g.fillStyle = '#e6e8e1'; g.font = '700 7px Silkscreen, monospace'; g.fillText(`${left} MIN`, 116, 16); }
+  drawBreathCircle(S0.breath, u);
+  const r = fig.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2), W2 = Math.round(r.width * d), H2 = Math.round(r.width * 94 / 160 * d);
+  if (fig.width !== W2 || fig.height !== H2) { fig.width = W2; fig.height = H2; }
+  const c = fig.getContext('2d'); c.imageSmoothingEnabled = false; c.drawImage(off, 0, 0, W2, H2);
+  requestAnimationFrame(frame);
+}
+// sitting: one bell or two
+const sitRow = document.createElement('div'); sitRow.className = 'btns'; sitRow.innerHTML = '<span class="eyebrow">Sit until</span><button id="sit1" aria-pressed="true">the next bell</button><button id="sit2" aria-pressed="false">two bells (an hour)</button>';
+$('exNote').after(sitRow);
+const setSit = n => { sitTarget = n; $('sit1').setAttribute('aria-pressed', n === 1); $('sit2').setAttribute('aria-pressed', n === 2); const i = EX.findIndex(e => e.sit); setEx(i); };
+$('sit1').onclick = () => setSit(1); $('sit2').onclick = () => setSit(2);
+
+// ================= why it helps: an illustrative model =================
+function fitC(c) { if (!c.dataset.h) c.dataset.h = c.getAttribute('height'); const r = c.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2), h = +c.dataset.h;
+  if (c.width !== Math.round(r.width * d)) { c.width = Math.round(r.width * d); c.height = Math.round(h * d); c.style.height = h + 'px'; } const g2 = c.getContext('2d'); g2.setTransform(d, 0, 0, d, 0, 0); return { g2, w: r.width, h }; }
+const base = hr => { const t = hr - 7; if (t < 0) return 6 + (hr / 7) * 4; const car = 22 * Math.exp(-Math.pow((t - 0.6) / 0.55, 2)); return 4 + 12 * Math.exp(-t / 5.5) + car; };   // nmol/L, waking at 7:00
+function why() {
+  const wk = +$('weeks').value, dy = +$('days').value, fe = +$('ferm').value, vg = +$('veg').value;
+  $('weeksV').textContent = `${wk}`; $('daysV').textContent = `${dy}`; $('fermV').textContent = `${fe}`; $('vegV').textContent = `${vg}`;
+  const adh = Math.min(1, wk / 8) * (dy / 7), red = 0.15 * adh;
+  { const { g2, w, h } = fitC($('cCort')), L = 38, B = 22, T = 10, pw = w - L - 10, ph = h - B - T, X = hr => L + hr / 24 * pw, Y = v => T + (1 - v / 40) * ph;
+    g2.clearRect(0, 0, w, h); g2.strokeStyle = tok('--line'); g2.fillStyle = tok('--muted'); g2.font = '500 10.5px DM Mono, monospace';
+    [0, 10, 20, 30, 40].forEach(v => { g2.beginPath(); g2.moveTo(L, Y(v)); g2.lineTo(L + pw, Y(v)); g2.stroke(); g2.textAlign = 'right'; g2.fillText(v, L - 4, Y(v) + 3.5); });
+    g2.textAlign = 'center'; [0, 6, 12, 18, 24].forEach(hr => g2.fillText(`${hr}:00`, X(hr), h - 6));
+    const line = (f, col, dash) => { g2.strokeStyle = col; g2.lineWidth = 2; g2.setLineDash(dash || []); g2.beginPath(); for (let k = 0; k <= 240; k++) { const hr = k / 10, y = Y(f(hr)); k ? g2.lineTo(X(hr), y) : g2.moveTo(X(hr), y); } g2.stroke(); g2.setLineDash([]); };
+    line(base, tok('--muted'), [4, 3]); line(hr => base(hr) * (1 - red), tok('--accent'));
+    g2.textAlign = 'left'; g2.font = '700 12px Atkinson Hyperlegible, sans-serif'; g2.fillStyle = tok('--muted'); g2.fillText('- - before', L + 6, T + 12); g2.fillStyle = tok('--accent'); g2.fillText(`— after ${wk} weeks, ${dy} days a week`, L + 70, T + 12); }
+  const infl = 100 * (1 - Math.min(0.2, fe * 0.035) - Math.min(0.08, vg * 0.01));
+  { const { g2, w, h } = fitC($('cInfl')), L = 120, pw = w - L - 60; g2.clearRect(0, 0, w, h); g2.font = '700 12px Atkinson Hyperlegible, sans-serif'; g2.textBaseline = 'middle';
+    [['typical diet', 100, tok('--muted')], ['with these foods', infl, tok('--calm')]].forEach(([t, v, c2], k) => { const y = 22 + k * 36; g2.fillStyle = tok('--muted'); g2.textAlign = 'right'; g2.fillText(t, L - 8, y);
+      g2.fillStyle = c2; g2.fillRect(L, y - 10, v / 100 * pw, 20); g2.fillStyle = tok('--ink'); g2.textAlign = 'left'; g2.fillText(Math.round(v), L + v / 100 * pw + 6, y); }); g2.textBaseline = 'alphabetic'; }
+  $('whyNote').innerHTML = `<b>In this sketch:</b> ${wk} weeks at ${dy} days a week lowers the day's cortisol by about ${Math.round(red * 100)}%, and ${fe} serving${fe === 1 ? '' : 's'} of fermented food plus ${vg} of fresh produce lowers the inflammation index by about ${Math.round(100 - infl)}%.`;
+}
+['weeks', 'days', 'ferm', 'veg'].forEach(id => $(id).addEventListener('input', why));
+window.addEventListener('resize', why); try { new MutationObserver(why).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] }); } catch (e) {}
+setEx(0); why(); requestAnimationFrame(frame);
+})();
+</script>
+</body></html>

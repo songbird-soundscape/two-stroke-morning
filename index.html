@@ -97,9 +97,10 @@ canvas.plot { width: 100%; display: block; }
   <header>
     <h1>Two-Stroke <span>Morning</span></h1>
     <p>A yard crew works the lawn next door with a gas backpack blower, a string trimmer and a riding mower. Pick the crew (three workers, one rider who splits into three, or one worker switching tools), shape each machine's sound, move the neighbour closer or shut the window, and follow what the noise, the fuel and the exhaust add up to: for the people at home and for the crew.</p>
-    <p class="warn-line"><b>Fair warning:</b> your first click brings the weed-whip past the window LOUD, the way it really goes: it hunts the yard for overgrown patches, revs, stalls, blares back on, wanders off and comes back. Turn your device volume down before you start. Then tweak the knobs until your world sounds better and run it by again: battery, distance, the window, the sound lab, or the prairie.</p>
+    <p class="warn-line"><b>Fair warning:</b> the crew is already at work, and your first click turns its sound on, LOUD, the way it really goes. Turn your device volume down before you start. "Weed-whip past the window" sends the trimmer hunting the yard for overgrown patches: it revs, stalls, blares back on, wanders off and comes back. Then tweak the knobs until your world sounds better: battery, distance, the window, the sound lab, or the prairie.</p>
   </header>
 
+  <div class="eyebrow" id="whackNote">Whack-a-mole: click a worker to make them stop.</div>
   <div class="stage"><canvas id="scene" width="960" height="400" aria-label="Pixel street: a worker with a backpack leaf blower and a worker with a string trimmer on the next lawn, a neighbour at a window, exhaust and sound rings"></canvas></div>
   <div class="row"><label for="scape">Leaf blower street ⟷ soundscape (or drag the divider on the street)</label><span class="val" id="scapeV">leaf blower street</span><input id="scape" type="range" min="0" max="100" value="4"></div>
 
@@ -110,6 +111,7 @@ canvas.plot { width: 100%; display: block; }
     <span class="seg" role="group" aria-label="How loud"><button id="loud_1" aria-pressed="false">Polite</button><button id="loud_2" aria-pressed="false">Loud</button><button id="loud_3" aria-pressed="true">SO LOUD</button></span>
     <span class="eyebrow" id="clock">—</span></div>
   <p class="note" id="loudNote"></p>
+  <div class="btns"><span class="toggle"><input type="checkbox" id="bell_on" checked><label for="bell_on">Meditation bell: a welcome when you arrive, then on the hour and half hour</label></span><button id="bell_now">Ring it now</button><span class="eyebrow" id="bellNext"></span><a class="go" id="breathLink" href="https://songbird-soundscape.github.io/two-stroke-morning/breath/" style="font:700 13px var(--f-body);padding:6px 11px;border-radius:8px;background:var(--vis);color:var(--panel);text-decoration:none">Bells &amp; breath: a guided practice →</a></div>
   <div class="btns"><span class="eyebrow">Crew</span><span class="seg" role="group" aria-label="Crew mode"><button id="mode_crew" aria-pressed="true">Crew of three</button><button id="mode_ballet" aria-pressed="false">Ballet mode</button><button id="mode_solo" aria-pressed="false">Mower-blower mode</button><button id="mode_duo" aria-pressed="false">Two-blower mode</button></span>
     <span class="note" id="modeNote"></span></div>
   <div class="btns"><button id="prairie" aria-pressed="false">Let's go back to the prairie</button><span class="note" id="prairieNote">Every lawn was a prairie once.</span></div>
@@ -181,6 +183,29 @@ canvas.plot { width: 100%; display: block; }
         <div class="btns"><button id="mu_game">Perfect pitch: name the engine</button><span class="eyebrow" id="mu_score"></span></div>
         <p class="note" id="mu_gameMsg">Press the button, listen to a mystery engine, then click its note on the circle.</p>
         <p class="note"><b>Perfect pitch</b> (absolute pitch) is naming a note with no reference. It's rare, roughly 1 in 10,000 people, more common with early music training and among speakers of tonal languages. <b>Relative pitch</b>, hearing the distance between notes, is what most musicians use, and anyone can train it. Scales here are in equal temperament, except maqam Rast, which uses quarter tones (E and B "half-flat", marked with a reversed flat): engines, unlike pianos, can play between the keys.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="bench" aria-labelledby="hAum">
+    <header><h2 id="hAum">AUM: the vowel triangle</h2><span class="eyebrow">three sounds, one syllable</span></header>
+    <div class="benches">
+      <div style="display:grid;gap:10px;min-width:0">
+        <canvas class="plot" id="cAum" height="330" aria-label="A triangle with A, U and M at the corners; drag the handle to mix the three sounds; the centre is all three at once"></canvas>
+        <div class="btns"><button class="go" id="aum_hold" aria-pressed="false">Sound it</button><button id="aum_chant" aria-pressed="false">Chant A · U · M · silence</button><span class="toggle"><input type="checkbox" id="aum_loop" checked><label for="aum_loop">Keep chanting</label></span></div>
+        <p class="note" id="aumRead"></p>
+      </div>
+      <div style="display:grid;gap:10px;min-width:0">
+        <div class="row"><label for="aum_f0">Pitch</label><span class="val" id="aum_f0V"></span><input id="aum_f0" type="range" min="60" max="400" step="0.5" value="110"></div>
+        <div class="row"><label for="aum_size">Voice size (longer or shorter vocal tract)</label><span class="val" id="aum_sizeV"></span><input id="aum_size" type="range" min="0.8" max="1.4" step="0.01" value="1"></div>
+        <div class="row"><label for="aum_tempo">Chant length</label><span class="val" id="aum_tempoV"></span><input id="aum_tempo" type="range" min="2" max="12" step="0.5" value="5"></div>
+        <div class="btns"><button id="aum_tune">Tune to the mower's note</button></div>
+        <div class="eyebrow">Your own voice (microphone; nothing is recorded or sent)</div>
+        <div class="btns"><button id="aum_mic" aria-pressed="false">Listen to my voice</button><button id="aum_match" disabled>Match my pitch</button></div>
+        <div class="btns"><span class="eyebrow">Teach it your corners</span><button id="aum_calA" disabled>Sing "aah"</button><button id="aum_calU" disabled>Sing "ooo"</button><button id="aum_calM" disabled>Hum "mmm"</button></div>
+        <p class="note" id="aumMic">Press "Listen to my voice", then sing or hum: a dot shows where your voice sits in the triangle and the pitch you're on.</p>
+        <p class="note"><b>How it works.</b> A voice is a buzz from the vocal folds, shaped by the throat and mouth into resonances called formants. "Aah" has its first two formants high and spread (about 730 and 1,090 Hz in an adult man's voice); "ooo" has both low (about 300 and 870 Hz) with rounded lips; "mmm" closes the mouth and sends the sound through the nose, leaving a low, muffled murmur. Here each corner is its own filter shaping the same buzz, and the handle sets how much of each you hear, so the centre sounds all three at once. Your microphone is analysed in the browser by linear prediction, the method phone codecs use, to find your pitch and formants (Peterson &amp; Barney 1952; Fant 1960).</p>
+        <p class="note"><b>Sounds that soothe.</b> Some sounds are taken as pleasurable, even healing, and a few of the reasons have been measured. After a stressful task, people recover faster (skin conductance falls sooner) while listening to nature sounds than to traffic noise (Alvarsson et al. 2010). Reciting mantras or the rosary slows breathing to about six breaths a minute, where heart rate and blood pressure rhythms fall into step (Bernardi et al. 2001). Humming raises nitric oxide in the nose about fifteenfold, which helps the sinuses ventilate (Weitzberg &amp; Lundberg 2002). The studies are small and the effects modest, but they point the same way as the rest of this page: the sounds around us reach the body.</p>
       </div>
     </div>
   </section>
@@ -265,6 +290,15 @@ canvas.plot { width: 100%; display: block; }
         <p class="note" id="verdict"></p>
       </div>
     </div>
+    <div class="eyebrow">Or neither: ways to keep the yard where the CO₂ never needs to be made</div>
+    <div class="wide"><table class="out" id="third"></table></div>
+    <div class="btns"><label for="idea_in" class="eyebrow">Add your idea</label><input id="idea_in" type="text" maxlength="140" placeholder="e.g. hang the laundry out to dry" style="flex:1;min-width:200px;font:15px var(--f-body);padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)"><button id="idea_add">Add</button></div>
+    <div class="btns" id="idea_list"></div>
+    <p class="note">Your ideas stay in this browser, and the latest one goes along with your anonymous answers if you choose to share them under "Be counted". Hand-tool figures count only the extra breathing of the work; that carbon came from food, so it cycles back.</p>
+    <div class="eyebrow">From the yard to the table</div>
+    <p class="note"><b>Low-cook, not raw.</b> If one slice of toast for everyone on Earth is that much CO₂, the kitchen is worth a look too. Skipping the stove entirely isn't the answer: cooking makes some nutrients much easier to absorb (the lycopene in tomatoes, the beta-carotene in carrots, the starch in grains and roots), kills germs, and may be part of how our ancestors got the energy for big brains (Wrangham 2009). But most vegetables need only a little: steam them briefly, cook in one pot with the lid on, and eat plenty fresh, in as many colours as you can find.</p>
+    <p class="note"><b>Wild edibles close to home</b>, in season and free of fuel: <i>Diospyros virginiana</i>, the American persimmon, sweet only when soft and fully ripe, often after frost; elm samaras (<i>Ulmus</i>), the papery spring seeds, mild and nutty, nibbled raw; dandelion (<i>Taraxacum officinale</i>), leaves for salad and flowers for fritters; purslane (<i>Portulaca oleracea</i>), lemony and rich in omega-3 fats; and, in Texas, pecans (<i>Carya illinoinensis</i>) and prickly-pear fruit (<i>Opuntia</i>). Be sure of what you pick, and never from a lawn or roadside that's been sprayed: one more reason to let the yard grow back.</p>
+    <p class="note"><b>Coming to the lab:</b> the deep history of eating plants, from what people gathered thousands of years ago (palaeoethnobotany), to the pollen that tells us (palynology), to the animals that eat pollen itself (palynivory: bees, some butterflies and beetles, honey possums), to the pollen-filled coprolites, ancient human faeces, preserved in dry Texas rock shelters. And deeper still, the questions of the Cordaiteans: tiny coprolites in Pennsylvanian coal balls packed with cordaitalean pollen (<i>Florinites</i>), some of the oldest evidence of animals eating pollen, about 300 million years before the first bee.</p>
   </section>
 
   <section class="bench" aria-labelledby="hPrairie">
@@ -339,13 +373,15 @@ canvas.plot { width: 100%; display: block; }
         <h3>1 · Tell us where you stand, anonymously</h3>
         <p class="note">Opens a short form with no name or email field. It carries over only your stance, this page's settings (distance, window, sensitivity, start time, crew) and which knobs you reached for once the noise came on, in order, so we can see what people tend to try first; you add your region (state, or the first three digits of your ZIP) if you like. "Mow on" counts just as much as "phase out gas". Only totals are ever published, such as "18% said mow on".</p>
         <div class="wide"><table class="out" id="ctSummary"></table></div>
-        <div class="btns"><button class="go" id="ctForm">Share my answers anonymously</button><span class="eyebrow" id="ctFormMsg"></span></div>
+        <div class="btns"><button class="go" id="ctForm">Share my answers anonymously</button><button id="ctSee">See the results so far</button><span class="eyebrow" id="ctFormMsg"></span></div>
+        <div id="ctResults" class="note"></div>
       </div>
       <div style="display:grid;gap:10px;min-width:0">
         <h3>2 · Get updates, and a packet of border seeds</h3>
         <p class="note">A separate mailing list for news when the model, the data or the letters improve, with an opt-in for a free packet of seeds for a native perennial border suited to your region: something to plant along the lawn that never needs a blower. Your email is used only for these updates, and is never linked to your answers in the form on the left. Unsubscribe any time.</p>
         <div class="btns"><button id="ctNews">Sign up for updates and seeds</button><span class="eyebrow" id="ctNewsMsg"></span></div>
         <p class="note"><a href="https://songbird-soundscape.github.io/two-stroke-morning/tip/" target="_blank" rel="noopener">Tip the lab</a></p>
+        <p class="note"><b>More from the lab:</b> <a href="https://songbird-soundscape.github.io/neighborhood-barbecue/" target="_blank" rel="noopener">Neighborhood Barbecue</a>. One block, two eras: a 1957 cookout and a greener someday where sheep, goats and bison keep the grass. It ends at a Tejano barbecue festival where, today, you can't hear the band for the leaf blowers.</p>
         <p class="note"><b>Our promise.</b> The form collects no names, emails or exact locations, and only totals are shared. The mailing list keeps only what it needs to send updates (and, if you ask for seeds, a postal address, deleted once the packet ships). The two are kept apart and never matched.</p>
       </div>
     </div>
@@ -366,8 +402,9 @@ canvas.plot { width: 100%; display: block; }
       <div>Hearing: NIOSH (1998) recommended exposure limit, 85 dB(A) for 8 hours with a 3 dB exchange rate. Fuel and smog: California Air Resources Board, small off-road engine fact sheets (2021); California law AB 1346 (2021) ends sales of new small gas off-road engines from 2024. CO₂ per litre: US EPA. Electricity: US average grid intensity, about 0.37 kg CO₂ per kWh (EIA, 2023).</div>
       <div>Blood pressure: Guyton, Coleman &amp; Granger (1972), circulation: overall regulation, <i>Annu. Rev. Physiol.</i> 34:13; Haralabidis et al. (2008), night aircraft noise and blood pressure (HYENA), <i>Eur. Heart J.</i> 29:658; Schmidt et al. (2013), night aircraft noise and endothelial function, <i>Eur. Heart J.</i> 34:3508; van Kempen &amp; Babisch (2012), road traffic noise and hypertension meta-analysis, <i>J. Hypertens.</i> 30:1075; Münzel et al. (2018), environmental noise and the cardiovascular system, <i>J. Am. Coll. Cardiol.</i> 71:688.</div>
       <div>Which gets you first: IPCC AR6 WG1 (2021) Summary for Policymakers, cumulative CO₂ 1850–2019 ≈ 2,390 Gt and ≈ 1.1 °C warming; NOAA Coral Reef Watch, global bleaching events 1998, 2010, 2014–17 and 2023–25; Hughes et al. (2018), spatial and temporal patterns of mass bleaching, <i>Science</i> 359:80. NIOSH Pocket Guide, carbon dioxide (REL 5,000 ppm; IDLH 40,000 ppm). Qian &amp; Follett (2002), turfgrass soil carbon, <i>Agron. J.</i> 94:930; Townsend-Small &amp; Czimczik (2010), carbon sequestration and greenhouse gas emissions in urban turf, <i>Geophys. Res. Lett.</i> 37:L02707; Pontzer et al. (2012), hunter-gatherer energetics, <i>PLoS ONE</i> 7:e40503; Kleiber (1932), body size and metabolism, <i>Hilgardia</i> 6:315.</div>
-      <div>Lawn to prairie: Milesi et al. (2005), mapping and modeling the biogeochemical cycling of turf grasses in the United States, <i>Environ. Manage.</i> 36:426; Samson &amp; Knopf (1994), prairie conservation in North America, <i>BioScience</i> 44:418; Hornaday (1889), <i>The Extermination of the American Bison</i>, Smithsonian Report; Flores (1991), bison ecology and bison diplomacy, <i>J. Am. Hist.</i> 78:465; Sanderson et al. (2008), the ecological future of the North American bison, <i>Conserv. Biol.</i> 22:252; Collins et al. (1998), modulation of diversity by grazing and mowing in native tallgrass prairie, <i>Science</i> 280:745; Knapp et al. (1999), the keystone role of bison in North American tallgrass prairie, <i>BioScience</i> 49:39; Weaver (1954), <i>North American Prairie</i>; Weaver (1968), <i>Prairie Plants and Their Environment</i> (root depths). Time lapse: timings follow common restoration guidance ("sleep, creep, leap"), e.g. the Tallgrass Prairie Center's <i>Tallgrass Prairie Center Guide to Prairie Restoration in the Upper Midwest</i> (Smith, Williams &amp; Houseal 2010); root depths approximate. Who grazes it: Towne, Hartnett &amp; Cochran (2005), vegetation trends in tallgrass prairie from bison and cattle grazing, <i>Ecol. Appl.</i> 15:1550; Taylor et al. (2023), early dispersal of domestic horses into the Great Plains and northern Rockies, <i>Science</i> 379:1316; Gregory (1984), communal denning in snakes, in <i>Vertebrate Ecology and Systematics</i>, Univ. Kansas Mus. Nat. Hist. Spec. Publ. 10; Skinner &amp; Miller (2020), aggregation and social interaction in garter snakes, <i>Behav. Ecol. Sociobiol.</i> 74:51.</div>
+      <div>Lawn to prairie: Milesi et al. (2005), mapping and modeling the biogeochemical cycling of turf grasses in the United States, <i>Environ. Manage.</i> 36:426; Samson &amp; Knopf (1994), prairie conservation in North America, <i>BioScience</i> 44:418; Hornaday (1889), <i>The Extermination of the American Bison</i>, Smithsonian Report; Flores (1991), bison ecology and bison diplomacy, <i>J. Am. Hist.</i> 78:465; Sanderson et al. (2008), the ecological future of the North American bison, <i>Conserv. Biol.</i> 22:252; Collins et al. (1998), modulation of diversity by grazing and mowing in native tallgrass prairie, <i>Science</i> 280:745; Knapp et al. (1999), the keystone role of bison in North American tallgrass prairie, <i>BioScience</i> 49:39; Weaver (1954), <i>North American Prairie</i>; Weaver (1968), <i>Prairie Plants and Their Environment</i> (root depths). Time lapse: timings follow common restoration guidance ("sleep, creep, leap"), e.g. the Tallgrass Prairie Center's <i>Tallgrass Prairie Center Guide to Prairie Restoration in the Upper Midwest</i> (Smith, Williams &amp; Houseal 2010); root depths approximate. From the yard to the table: Wrangham (2009), <i>Catching Fire: How Cooking Made Us Human</i>. Who grazes it: Towne, Hartnett &amp; Cochran (2005), vegetation trends in tallgrass prairie from bison and cattle grazing, <i>Ecol. Appl.</i> 15:1550; Taylor et al. (2023), early dispersal of domestic horses into the Great Plains and northern Rockies, <i>Science</i> 379:1316; Gregory (1984), communal denning in snakes, in <i>Vertebrate Ecology and Systematics</i>, Univ. Kansas Mus. Nat. Hist. Spec. Publ. 10; Skinner &amp; Miller (2020), aggregation and social interaction in garter snakes, <i>Behav. Ecol. Sociobiol.</i> 74:51.</div>
       <div>Companion page: <a href="https://claude.ai/artifact/NzLXFacYbTFWyjQZ4jKAXS" target="_blank" rel="noopener">Ice Age Lab</a>, where the CO₂ goes.</div>
+      <div>Companion page: <a href="https://songbird-soundscape.github.io/neighborhood-barbecue/" target="_blank" rel="noopener">Neighborhood Barbecue</a>, the same lawn crew at a 1957 cookout and a Tejano barbecue festival, and the herd that could replace them.</div>
     </div>
   </section>
 </div>
@@ -687,6 +724,31 @@ function drawYard(y) {
     g.font = mono(11); g.fillStyle = tok('--muted'); const sub = `${fmtN(kg / y.blowHr)} blower-hours`;
     const sw = g.measureText(sub).width; if (x1 + 6 + sw < w - Rp) g.fillText(sub, x1 + 6, yy + rowH - 4 - bh / 2 + 4); });
 }
+// a third way: the same yard care with little or no fossil CO2, per worker over a season, on the bill's hours
+const IDEAS_KEY = 'twoStrokeIdeas';
+let IDEAS = []; try { IDEAS = JSON.parse(localStorage.getItem(IDEAS_KEY) || '[]'); } catch (e) {}
+function thirdWay() {
+  const b = bill(), days = SEASON_DAYS, gas = b.rows.reduce((s, r) => s + r.m.fuel * b.h * 2.35, 0) * days, kwh = b.rows.reduce((s, r) => s + r.m.kwh * b.h, 0) * days;
+  const blowGas = b.rows.filter(r => r.m.id === 'blow').reduce((s, r) => s + r.m.fuel * b.h * 2.35, 0) * days;
+  const rows = [
+    ['Gas crew, as now', gas, 'the baseline: petrol and two-stroke oil'],
+    ['Battery tools on the grid', kwh * 0.37, 'the same work, the electricity\'s CO₂ at the US average'],
+    ['Battery tools on rooftop solar', kwh * 0.045, 'only what it took to make the panels, spread over their life'],
+    ['Leave the leaves (no blowing)', gas - blowGas, 'mow and trim, but let the leaves rot where they fall'],
+    ['Rake, broom and push-reel mower', 0.075 * b.h * 3 * days, 'just the extra breathing of the work; quiet, and the crew\'s ears are spared'],
+    ['Let it go back to prairie', 0, 'no mowing, trimming or blowing; deep roots store carbon instead'],
+    ['Skip the toast, every working day', 1.0 * 0.05 * 0.37 * days, 'for scale: a 1 kW toaster for 3 minutes on the grid'],
+    ['Everyone on Earth makes one piece of toast', 8.1e9 * 0.05 * 0.46, `for scale: 8.1 billion slices on the world-average grid, the same as ${Math.round(8.1e9 * 0.05 * 0.46 / (0.7 * 2.35) / 1e6)} million hours of gas blowing`],
+  ];
+  const fmt = v => v >= 1e5 ? `${Math.round(v / 1000).toLocaleString()} t` : v >= 1000 ? `${(v / 1000).toFixed(2)} t` : v >= 1 ? `${Math.round(v)} kg` : v > 0 ? `${(v * 1000).toFixed(0)} g` : '0';
+  $('third').innerHTML = `<tr><th>Idea</th><th>CO₂ a season</th><th></th><th>What it means</th></tr>` + rows.map(([n, v, w]) => `<tr><td>${n}</td><td class="n">${fmt(v)}</td>
+    <td style="min-width:90px"><span style="display:inline-block;height:9px;border-radius:3px;background:var(${v === gas ? '--fume' : '--calm'});width:${Math.max(2, Math.min(90, Math.round(v / gas * 90)))}px"></span>${v > gas ? ' »' : ''}</td><td>${w}</td></tr>`).join('');
+  $('idea_list').innerHTML = IDEAS.length ? '<span class="eyebrow">Your ideas</span>' + IDEAS.map((t, i) => `<button data-k="${i}" title="Remove">${t.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c])} ✕</button>`).join('') : '';
+}
+function saveIdeas() { try { localStorage.setItem(IDEAS_KEY, JSON.stringify(IDEAS)); } catch (e) {} thirdWay(); if (typeof countSummary === 'function') countSummary(); }
+$('idea_add').onclick = () => { const t = $('idea_in').value.trim(); if (!t) return; IDEAS.push(t.slice(0, 140)); if (IDEAS.length > 12) IDEAS.shift(); $('idea_in').value = ''; saveIdeas(); };
+$('idea_in').addEventListener('keydown', e => { if (e.key === 'Enter') $('idea_add').click(); });
+$('idea_list').addEventListener('click', e => { const t = e.target.closest('[data-k]'); if (!t) return; IDEAS.splice(+t.dataset.k, 1); saveIdeas(); });
 function race(y) {
   const lis = L(), lt = longTerm(lis, SIM), c = SIM.cortSum, visit = SIM.filter(p => p.t <= VISIT);
   const sbpPk = Math.max(...SIM.map(p => p.sbp)), visitsYr = lis.yards * VISIT_WEEKS;
@@ -703,7 +765,7 @@ function race(y) {
     ['World CO₂ → the reefs', 'already', `about 2,390 Gt CO₂ to 2019, ${fmtN(BLEACH_KG / y.blowHr)} blower-hours, warmed the oceans enough for four global bleaching events since 1998. ` + pill('first past the post', 'bad')],
   ];
   $('race').innerHTML = `<tr><th>Pathway</th><th>Size</th><th>Reading</th></tr>` + rows.map(r => `<tr><td>${r[0]}</td><td class="n">${r[1]}</td><td>${r[2]}</td></tr>`).join('');
-  $('verdict').innerHTML = `<b>Verdict:</b> neither, directly. The noise reaches your arteries the first morning (+${Math.round(sbpPk - 118)} mmHg)${lt.ihd > 1.001 ? ', and at this street\'s week-average level, years of it add measurable heart risk' : '; averaged over the week this street stays under the 53 dB line where long-term heart risk is counted, so move closer, add yards or start earlier to cross it'}. The CO₂ would take about ${(Math.round(yrsTo(5000) / 100) * 100).toLocaleString()} years to make outdoor air unhealthy to breathe, and the blower adds almost nothing to it locally. The CO₂ gets the reef first, and the lawn next door stores about ${fmtN(y.lawnWeek / y.blowHr)} blower-hours of it a week in the growing season, before the clippings, mower and fertiliser give much of it back (Townsend-Small &amp; Czimczik 2010).`;
+  $('verdict').innerHTML = `<b>Verdict:</b> neither, directly. The noise reaches your arteries the first morning (+${Math.round(sbpPk - 118)} mmHg)${lt.ihd > 1.001 ? ', and at this street\'s week-average level, years of it add measurable heart risk' : '; averaged over the week this street stays under the 53 dB line where long-term heart risk is counted, so move closer, add yards or start earlier to cross it'}. The CO₂ would take about ${(Math.round(yrsTo(5000) / 100) * 100).toLocaleString()} years to make outdoor air unhealthy to breathe, and the blower adds almost nothing to it locally. The CO₂ gets the reef first, and the lawn next door stores about ${fmtN(y.lawnWeek / y.blowHr)} blower-hours of it a week in the growing season, before the clippings, mower and fertiliser give much of it back (Townsend-Small &amp; Czimczik 2010). <b>Or skip the excess altogether:</b> the ideas below keep the yard with little or no fossil CO₂.`;
   $('lawnV').textContent = `${y.lawn.toLocaleString()} m² (${Math.round(y.lawn * 10.764).toLocaleString()} ft²)`;
 }
 
@@ -717,7 +779,9 @@ const px = (x, y, c, w = 1, h = 1) => { og.fillStyle = c; og.fillRect(Math.round
 let particles = [], rings = [], tScene = 0, minute = 0, playing = !reduceMotion, birdState = { x: 120, y: 22, flying: false, vx: 0 };
 const HOUSE = { x: 6, y: 40, w: 62, h: 34 };
 const WIN = { x: 40, y: 50, w: 14, h: 12 };
+let HITS = [], WHACKS = [], whackCount = 0;                   // whack-a-mole: where each worker was drawn this frame, and the 'shh!' pops
 function drawWorker(x, y, kind, frame, onNow) {
+  if (kind !== 'none') HITS.push({ kind, x: x - 5, y: y - 2, w: 24, h: 24 });
   const step = Math.floor(frame) % 2;
   px(x + 1, y + 14, PAL.pants, 2, 5 - step); px(x + 4, y + 14, PAL.pants, 2, 4 + step);   // legs
   px(x, y + 7, PAL.vest, 7, 7); px(x + 1, y + 9, PAL.vest2, 5, 1); px(x + 1, y + 11, '#f5f0d0', 5, 1);   // vest with reflective band
@@ -733,6 +797,7 @@ function drawWorker(x, y, kind, frame, onNow) {
   }
 }
 function drawMower(x, y, frame, on, rider, gear) {   // riding mower, rider optional; gear = trimmer and blower strapped on
+  HITS.push({ kind: 'mow', x: x - 3, y: y - 14, w: 30, h: 30 });
   const jig = on ? Math.floor(frame * 2) % 2 : 0;
   px(x, y + 4 + jig, '#2e7d32', 22, 6); px(x + 14, y + 2 + jig, '#2e7d32', 8, 3); px(x + 15, y + 2 + jig, PAL.hat, 6, 1);   // body and hood stripe
   px(x - 1, y + 9, '#235d26', 26, 2);                                                       // cutting deck
@@ -863,7 +928,7 @@ function setGrazer(id) {
   if (!PRAIRIE) $('prairie').click();
 }
 function drawScene(sim) {
-  const lis = L();
+  const lis = L(); HITS = [];
   // sky + far trees + sun
   for (let y = 0; y < 40; y++) px(0, y, y < 20 ? PAL.sky1 : PAL.sky2, PW, 1);
   px(204, 8, PAL.sun, 9, 9); px(202, 10, PAL.sun, 13, 5); px(206, 6, PAL.sun, 5, 13);
@@ -965,6 +1030,11 @@ function drawScene(sim) {
     g.fillText('◂▸', xd, hy + 1); g.textAlign = 'left'; g.textBaseline = 'alphabetic'; }
   if (PRAIRIE && GRAZER === 'tex' && prairieK > 0.8) { g.font = `700 ${Math.max(12, Math.round(W2 / 50))}px ${tok('--f-pixel') || 'monospace'}`; g.fillStyle = '#ffd866'; g.strokeStyle = '#000'; g.lineWidth = Math.max(2, W2 / 350);
     const t2 = 'YOU NAME IT, TEX!', x2 = W2 * 0.52, y2 = H2 * 0.12; g.strokeText(t2, x2, y2); g.fillText(t2, x2, y2); }
+  // whack-a-mole pops: a 'SHH!' where a worker was stopped
+  WHACKS = WHACKS.filter(w => performance.now() - w.t < 1100);
+  WHACKS.forEach(w => { const a = 1 - (performance.now() - w.t) / 1100, sx = w.x / PW * W2, sy = (w.y - 6 - (1 - a) * 10) / PH * H2;
+    g.globalAlpha = Math.max(0, a); g.font = `700 ${Math.max(14, Math.round(W2 / 40))}px ${tok('--f-pixel') || 'monospace'}`; g.lineWidth = Math.max(3, W2 / 260); g.strokeStyle = '#000'; g.fillStyle = '#ffd866'; g.textAlign = 'center';
+    g.strokeText(w.word, sx, sy); g.fillText(w.word, sx, sy); g.textAlign = 'left'; g.globalAlpha = 1; });
   // HUD label inside the scene
   if (cur) { g.font = `700 ${Math.max(11, Math.round(W2 / 70))}px ${tok('--f-pixel') || 'monospace'}`; g.fillStyle = '#ffffff'; g.strokeStyle = '#000000'; g.lineWidth = Math.max(2, W2 / 400);
     const px0 = PASS ? passX() : null, txt = px0 !== null ? `${Math.round(levelAt(MACH.find(m => m.id === 'trim'), passD(), L()).l)} dB(A) AT THE WINDOW` : `${Math.round(cur.la)} dB(A) AT THE WINDOW`; const tx = (HOUSE.x + 1) / PW * W2, ty = (HOUSE.y - 18) / PH * H2; g.strokeText(txt, tx, ty); g.fillText(txt, tx, ty); }
@@ -1111,7 +1181,7 @@ function outcomes() {
   const worst = Math.max(...b.rows.map(r => r.dose));
   $('billNote').innerHTML = `The crew carries the heaviest load. At about ${Math.round(b.rows[0].ear)} dB(A), NIOSH's limit allows ${b.rows[0].allowedMin < 60 ? `${b.rows[0].allowedMin.toFixed(0)} minutes` : `${(b.rows[0].allowedMin / 60).toFixed(1)} hours`} of blower a day before hearing damage accumulates; ${b.h} hours is ${Math.round(worst)}% of the daily allowance${$('muffs').checked ? ' even with earmuffs' : ''}. Workers also breathe the exhaust, rich in benzene and fine particles, at arm's length all day.`;
   drawBill(b);
-  const ys = yardstick(); race(ys); drawYard(ys); bpNote();
+  const ys = yardstick(); race(ys); drawYard(ys); bpNote(); thirdWay();
   if (typeof countSummary === 'function' && $('ctSummary')) try { countSummary(); } catch (e) {}
 }
 
@@ -1375,6 +1445,35 @@ $('scene').addEventListener('pointerdown', e => { const r = $('scene').getBoundi
 $('scene').addEventListener('pointermove', e => { const r = $('scene').getBoundingClientRect(), xs = r.left + (1 - SCAPE) * r.width; $('scene').style.cursor = dragging || Math.abs(e.clientX - xs) < 28 ? 'ew-resize' : ''; if (dragging) scapeFromEvent(e); });
 ['pointerup', 'pointercancel'].forEach(t => $('scene').addEventListener(t, () => { dragging = false; }));
 $('scape').addEventListener('input', () => { SCAPE = +$('scape').value / 100; scapeLabel(); });
+// meditation bell: a singing-bowl strike at :00 and :30 on the clock, while the page is open and sound has been started
+// bowls ring with inharmonic partials that fade at different rates; the higher ones die first
+const BELL = [[1, 1, 9], [2.71, 0.5, 6], [5.15, 0.28, 4], [8.42, 0.14, 2.5], [12.4, 0.06, 1.5]];   // [ratio, level, seconds to fade]
+let bellLast = -1;
+// opts: vol (overall level), dets (detuned copies per partial, in Hz: wider = faster beating), wobble (depth of a slow swell), stretch (longer ring)
+const BELL_HALF = { vol: 0.22, dets: [0, 1.8], wobble: 0, stretch: 1 };
+const BELL_OPEN = { vol: 0.12, dets: [0, 2.6, -3.9], wobble: 0.35, stretch: 1.4 };   // the welcome bell: quieter, with more warbling resonance
+function ringBell(opts) {
+  const O = opts && opts.vol ? opts : BELL_HALF;
+  try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.resume) AC.resume(); } catch (e) { return; }
+  const t = AC.currentTime + 0.02, f0 = 196, out = AC.createGain(); out.gain.value = O.vol; out.connect(AC.destination);
+  if (O.wobble) { const lfo = AC.createOscillator(), lg = AC.createGain(); lfo.frequency.value = 2.3; lg.gain.value = O.vol * O.wobble; lfo.connect(lg); lg.connect(out.gain); lfo.start(t); lfo.stop(t + 9 * O.stretch + 0.2); }
+  BELL.forEach(([r, a, d0]) => { const d = d0 * O.stretch; O.dets.forEach(det => {   // each partial as detuned copies, so it beats ("wah-wah") like a real bowl
+    const o = AC.createOscillator(), g = AC.createGain(); o.frequency.value = f0 * r + det;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(a * 0.5 / Math.sqrt(O.dets.length / 2), t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    o.connect(g); g.connect(out); o.start(t); o.stop(t + d + 0.1); }); });
+}
+// the welcome bell: rings at the first click or key press (browsers allow sound only after one); turn the bell off with the switch
+function openBell() { if ($('bell_on').checked) ringBell(BELL_OPEN); }
+document.addEventListener('pointerdown', openBell, { once: true, capture: true });
+document.addEventListener('keydown', openBell, { once: true, capture: true });
+function bellTick() {
+  const d = new Date(), slot = d.getHours() * 2 + (d.getMinutes() >= 30 ? 1 : 0);
+  if (bellLast < 0) bellLast = slot;                                               // don't ring on page load, only when the next half hour arrives
+  const nm = d.getMinutes() < 30 ? 30 : 60, left = nm - d.getMinutes();
+  $('bellNext').textContent = $('bell_on').checked ? `next bell in ${left} min` : '';
+  if (slot !== bellLast) { bellLast = slot; if ($('bell_on').checked && AC && AC.state === 'running') ringBell(); }
+}
+$('bell_now').onclick = () => ringBell(BELL_HALF);
 function startAudio() {
   try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.resume) AC.resume(); } catch (e) { return false; }
   stopAudio(); const lis = L(), mx = MIX(), now = AC.currentTime;
@@ -1454,7 +1553,24 @@ function endPass(byUser) {
   countSummary();
 }
 $('passBtn').onclick = e => { if (PASS) { if (e.isTrusted) { TRY.list.push('sound off'); TRY.tweaks++; } endPass(true); countSummary(); } else startPass(); };
-function crewArrives(e) { if (e.target && (e.target.id === 'listen' || e.target.id === 'passBtn')) return; if (!PASS && $('listen').getAttribute('aria-pressed') !== 'true' && !PRAIRIE) startPass(); }
+function sceneHit(e) {
+  const r = $('scene').getBoundingClientRect(), x = (e.clientX - r.left) / r.width * PW, y = (e.clientY - r.top) / r.height * PH;
+  if (x > (1 - SCAPE) * PW - 4) return null;                                   // the soundscape side has no machines
+  return HITS.slice().reverse().find(h => x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) || null;
+}
+function whack(h) {
+  const words = ['SHH!', 'QUIET!', 'OFF!', 'PEACE!', 'HUSH!'];
+  WHACKS.push({ x: h.x + h.w / 2, y: h.y, t: performance.now(), word: words[whackCount % words.length] }); whackCount++;
+  if (PASS && h.kind === 'trim') { endPass(true); }
+  else { const box = $(`${h.kind}_on`); if (box && box.checked) { box.checked = false; box.dispatchEvent(new Event('change', { bubbles: true })); } }
+  if (TRY.list[TRY.list.length - 1] !== 'whack-a-mole') { TRY.list.push('whack-a-mole'); TRY.tweaks++; }
+  const left = MACH.filter(m => m.on).length;
+  $('whackNote').textContent = left ? `Stopped ${whackCount}. ${left} machine${left === 1 ? '' : 's'} still running: keep going.` : `All quiet. Stopped ${whackCount}. Listen: the cows are coming back.`;
+  countSummary();
+}
+$('scene').addEventListener('pointerdown', e => { const h = sceneHit(e); if (h) { whack(h); e.stopPropagation(); } });
+$('scene').addEventListener('pointermove', e => { if (!$('scene').style.cursor || $('scene').style.cursor === 'crosshair') $('scene').style.cursor = sceneHit(e) ? 'crosshair' : ''; });
+function crewArrives(e) { if (e.target && (e.target.id === 'listen' || e.target.id === 'passBtn')) return; if (!PASS && $('listen').getAttribute('aria-pressed') !== 'true' && !PRAIRIE && minute <= VISIT) $('listen').click(); }   // the crew is already at work: the first click turns its sound on
 document.addEventListener('pointerdown', crewArrives, { once: true, capture: true });
 document.addEventListener('keydown', crewArrives, { once: true, capture: true });
 function setLoud(k) { LOUDNESS = k; [1, 2, 3].forEach(j => $(`loud_${j}`).setAttribute('aria-pressed', j === k)); recompute(); }
@@ -1567,6 +1683,7 @@ $('lt_copy').onclick = async () => { const t = $('lt_text').value;
 const COUNT_CFG = {
   formUrl: '',          // e.g. https://tally.so/r/XXXXXX  (anonymous opinion form)
   newsUrl: '',          // e.g. your newsletter's sign-up page (with the seed opt-in)
+  resultsCsv: '',       // the published-to-web CSV of the sheet's "Totals" tab (two columns: stance, count); see SETUP-be-counted.md
 };
 // what people reach for once the noise comes on: control names only, kept in this page until the form is opened
 const TRY = { list: [], tweaks: 0, soundOn: null, offS: '' };
@@ -1591,19 +1708,35 @@ function tryNote(e) {
 function countParams() { const lis = L(), st = $('lt_stance').value;
   return { stance: st, crew: MODE, distance_m: lis.dist, window: lis.closed ? 'closed' : 'open', sensitivity: { '0.6': 'low', '1': 'typical', '1.6': 'high' }[$('sens').value] || 'typical',
     start: fmtTime(lis.start), yards_per_week: lis.yards, machines: MACH.filter(m => m.on).map(m => `${m.id}:${m.gas ? 'gas' : 'battery'}`).join(' '),
+    idea: (IDEAS[IDEAS.length - 1] || '').slice(0, 140),
     first_fix: TRY.list[0] || 'none', fixes: TRY.list.join(' > ') || 'none', sound_off_s: TRY.offS || (TRY.soundOn ? 'let it play' : 'never played'),
     loudness: { 1: 'polite', 2: 'loud', 3: 'so loud' }[LOUDNESS], prairie: PRAIRIE ? GRAZER : 'no' }; }
 function countSummary() { const p = countParams(), lab = { mowon: 'Mow on', limits: 'Fine, with some limits', quieter: 'Quieter, please', phaseout: 'Time to phase out gas' };
   const nm = { blow: 'blower', trim: 'trimmer', mow: 'mower' };
   const rows = [['Stance', lab[p.stance]], ['Crew', { crew: 'crew of three', ballet: 'ballet mode', solo: 'mower-blower mode' }[p.crew]], ['Distance', `${p.distance_m} m`], ['Window', p.window], ['Noise sensitivity', p.sensitivity], ['Crew starts', p.start], ['Yards a week', p.yards_per_week], ['Machines', p.machines.split(' ').filter(Boolean).map(x => { const [id, pw] = x.split(':'); return `${nm[id]} (${pw})`; }).join(', ') || 'none'],
-    ['First thing you tried', p.first_fix], ['What you tried, in order', p.fixes], ['Seconds until you turned the sound off', p.sound_off_s], ['Volume', p.loudness], ['Prairie', p.prairie === 'no' ? 'no' : `yes (${GRAZERS[p.prairie].name})`]];
+    ['Your idea', p.idea || 'none added'], ['First thing you tried', p.first_fix], ['What you tried, in order', p.fixes], ['Seconds until you turned the sound off', p.sound_off_s], ['Volume', p.loudness], ['Prairie', p.prairie === 'no' ? 'no' : `yes (${GRAZERS[p.prairie].name})`]];
   $('ctSummary').innerHTML = `<tr><th colspan="2">What the form will receive (change it above)</th></tr>` + rows.map(r => `<tr><td>${r[0]}</td><td class="n">${r[1]}</td></tr>`).join(''); }
 function openLink(url, msgId, params) {
   if (!url) { $(msgId).textContent = 'coming soon: the link isn\'t set up yet'; return; }
   let u; try { u = new URL(url); } catch (e) { $(msgId).textContent = 'link not valid'; return; }
   if (params) Object.entries(params).forEach(([k, v]) => u.searchParams.set(k, v));
   window.open(u.toString(), '_blank', 'noopener'); $(msgId).textContent = 'opened in a new tab'; }
-$('ctForm').onclick = () => openLink(COUNT_CFG.formUrl, 'ctFormMsg', countParams());
+$('ctForm').onclick = () => { openLink(COUNT_CFG.formUrl, 'ctFormMsg', countParams()); showResults(); };
+$('ctSee').onclick = showResults;
+// results: totals only, read from a published "Totals" sheet; shares appear once at least 10 people have answered
+async function showResults() {
+  const box = $('ctResults'), LAB = { mowon: 'Mow on', limits: 'Fine, with some limits', quieter: 'Quieter, please', phaseout: 'Time to phase out gas' };
+  if (!COUNT_CFG.resultsCsv) { box.innerHTML = '<b>Results:</b> they will appear here once the survey is live.'; return; }
+  box.textContent = 'Loading the results…';
+  try {
+    const txt = await (await fetch(COUNT_CFG.resultsCsv + (COUNT_CFG.resultsCsv.includes('?') ? '&' : '?') + 't=' + Date.now(), { cache: 'no-store' })).text();
+    const counts = {}; txt.trim().split(/\r?\n/).forEach(line => { const [k, v] = line.split(',').map(x => x.replace(/"/g, '').trim()); if (LAB[k] && !isNaN(+v)) counts[k] = +v; });
+    const n = Object.values(counts).reduce((a, b) => a + b, 0);
+    if (n < 10) { box.innerHTML = `<b>${n} ${n === 1 ? 'person has' : 'people have'} answered so far.</b> The shares appear once at least 10 have, so no one can be picked out.`; return; }
+    box.innerHTML = `<b>${n.toLocaleString()} people have answered.</b>` + Object.keys(LAB).map(k => { const c = counts[k] || 0, pc = Math.round(c / n * 100);
+      return `<div style="display:grid;grid-template-columns:minmax(0,11em) 1fr 3.5em;gap:8px;align-items:center;margin-top:4px"><span>${LAB[k]}</span><span style="height:12px;border-radius:4px;background:var(--chip)"><span style="display:block;height:100%;width:${pc}%;border-radius:4px;background:var(${k === 'mowon' ? '--fume' : '--calm'})"></span></span><span class="n">${pc}%</span></div>`; }).join('');
+  } catch (e) { box.textContent = 'The results couldn\'t be loaded just now. Try again in a moment.'; }
+}
 $('ctNews').onclick = () => openLink(COUNT_CFG.newsUrl, 'ctNewsMsg', null);
 if (!COUNT_CFG.formUrl) $('ctFormMsg').textContent = 'coming soon';
 if (!COUNT_CFG.newsUrl) $('ctNewsMsg').textContent = 'coming soon';
@@ -1648,7 +1781,7 @@ function frame(now) {
   const dt = Math.min(0.1, (now - last) / 1000); last = now;
   if (playing) { tScene += dt; minute += dt * (minute > VISIT ? AFTER_SPEED : 1); if (minute > TRACE_END + 2) { minute = 0; } stepParticles(dt); }
   if (minute > VISIT && $('listen').getAttribute('aria-pressed') === 'true') $('listen').click();
-  thrStep(dt); callTick(now); birdTick(now);
+  thrStep(dt); callTick(now); birdTick(now); if (now - (window.__bellT || 0) > 1000) { window.__bellT = now; bellTick(); }
   if (AUD && AUD.scapeG && AC) AUD.scapeG.gain.setTargetAtTime(1 - 0.97 * SCAPE, AC.currentTime, 0.08);
   if (sonoPlay) { const tt = (now - sonoPlay.t0) / 1000; drawSono(tt); if (tt > sonoPlay.len + 0.2) { sonoPlay = null; drawSono(); } }
   if (PASS) { if (passX() === null) endPass(false); else audioTick(); } else if ($('listen').getAttribute('aria-pressed') === 'true') audioTick();   // the crew left: silence
@@ -1665,7 +1798,7 @@ recompute(); drawScene(SIM);
 $('lt_name').value = RCP[$('lt_to').value].name; ltAsks($('lt_to').value); letter(); countSummary();
 $('play').textContent = playing ? 'Pause the morning' : 'Run the morning'; $('play').setAttribute('aria-pressed', playing);
 requestAnimationFrame(frame);
-window.twoStroke = { simulate, longTerm, bill, MACH, L, setRpms };
+window.twoStroke = { simulate, longTerm, bill, MACH, L, setRpms, COUNT_CFG };
 })();
 </script>
 <script>
@@ -2078,5 +2211,146 @@ try { new MutationObserver(refresh).observe(document.documentElement, { attribut
 refresh();
 })();
 </script>
+<script>
+// ================= AUM: the vowel triangle =================
+(() => {
+'use strict';
+const $ = id => document.getElementById(id); if (!$('cAum')) return;
+const tok = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+// formants for an adult male voice: [frequency Hz, bandwidth Hz, level]
+const VOW = {
+  A: [[730, 90, 1], [1090, 110, 0.6], [2440, 160, 0.25]],
+  U: [[300, 60, 1], [870, 90, 0.35], [2240, 160, 0.08]],
+  M: [[250, 60, 1], [2200, 200, 0.03]],                     // nasal murmur: one strong low resonance, the mouth's higher ones muffled away
+};
+let W = { A: 1 / 3, U: 1 / 3, M: 1 / 3 }, ac = null, V = null, chant = null, holding = false;
+// ---------- the voice ----------
+function build() {
+  ac = ac || new (window.AudioContext || window.webkitAudioContext)(); if (ac.resume) ac.resume();
+  if (V) return V;
+  const src = ac.createOscillator(); src.type = 'sawtooth'; src.frequency.value = +$('aum_f0').value;
+  const vib = ac.createOscillator(), vg = ac.createGain(); vib.frequency.value = 5.2; vg.gain.value = 0.6; vib.connect(vg); vg.connect(src.frequency);   // a little vibrato
+  const tilt = ac.createBiquadFilter(); tilt.type = 'lowpass'; tilt.frequency.value = 3000; src.connect(tilt);
+  const master = ac.createGain(); master.gain.value = 0; const comp = ac.createDynamicsCompressor(); master.connect(comp); comp.connect(ac.destination);
+  const chains = {};
+  Object.entries(VOW).forEach(([k, fs]) => { const g = ac.createGain(); g.gain.value = 0; const filters = [];
+    fs.forEach(([f, bw, lv]) => { const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = f; bp.Q.value = f / bw; const lg = ac.createGain(); lg.gain.value = lv * (k === 'M' ? 4 : 3);
+      tilt.connect(bp); bp.connect(lg); lg.connect(g); filters.push([bp, f]); });
+    g.connect(master); chains[k] = { g, filters }; });
+  src.start(); vib.start(); V = { src, master, chains }; return V;
+}
+function apply(instant) {
+  if (!V) return; const t = ac.currentTime, tc = instant ? 0.01 : 0.06, size = +$('aum_size').value;
+  V.src.frequency.setTargetAtTime(+$('aum_f0').value, t, 0.05);
+  ['A', 'U', 'M'].forEach(k => { V.chains[k].g.gain.setTargetAtTime(W[k] * (k === 'M' ? 0.9 : 1), t, tc); V.chains[k].filters.forEach(([bp, f]) => bp.frequency.setTargetAtTime(f / size, t, 0.05)); });
+}
+function level(on, tc = 0.08) { if (!V) return; V.master.gain.setTargetAtTime(on ? 0.35 : 0, ac.currentTime, tc); }
+// ---------- the triangle ----------
+let geo = null, drag = false, trail = [], voiceW = null;
+function corners(w, h) { const m = 34, side = Math.min(w - 2 * m, (h - 2 * m) / 0.866), cx = w / 2, top = (h - side * 0.866) / 2;
+  return { M: [cx, top], A: [cx - side / 2, top + side * 0.866], U: [cx + side / 2, top + side * 0.866] }; }
+const toXY = (C, w) => [w.A * C.A[0] + w.U * C.U[0] + w.M * C.M[0], w.A * C.A[1] + w.U * C.U[1] + w.M * C.M[1]];
+function toW(C, x, y) {                                       // barycentric weights of a point, clamped into the triangle
+  const [x1, y1] = C.A, [x2, y2] = C.U, [x3, y3] = C.M, d = (y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3);
+  let a = ((y2 - y3) * (x - x3) + (x3 - x2) * (y - y3)) / d, u = ((y3 - y1) * (x - x3) + (x1 - x3) * (y - y3)) / d, m = 1 - a - u;
+  a = Math.max(0, a); u = Math.max(0, u); m = Math.max(0, m); const s = a + u + m || 1; return { A: a / s, U: u / s, M: m / s };
+}
+function draw() {
+  const c = $('cAum'), r = c.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2), h = 330;
+  if (c.width !== Math.round(r.width * d)) { c.width = Math.round(r.width * d); c.height = h * d; c.style.height = h + 'px'; }
+  const g = c.getContext('2d'); g.setTransform(d, 0, 0, d, 0, 0); const w = r.width; g.clearRect(0, 0, w, h);
+  const C = corners(w, h); geo = C;
+  g.beginPath(); g.moveTo(...C.A); g.lineTo(...C.U); g.lineTo(...C.M); g.closePath(); g.fillStyle = tok('--chip'); g.fill(); g.strokeStyle = tok('--line'); g.lineWidth = 1.5; g.stroke();
+  const cen = toXY(C, { A: 1 / 3, U: 1 / 3, M: 1 / 3 }); g.setLineDash([3, 4]); ['A', 'U', 'M'].forEach(k => { g.beginPath(); g.moveTo(...C[k]); g.lineTo(...cen); g.stroke(); }); g.setLineDash([]);
+  g.font = `700 22px ${tok('--f-pixel') || 'monospace'}`; g.textAlign = 'center'; g.fillStyle = tok('--ink');
+  g.fillText('A', C.A[0] - 14, C.A[1] + 20); g.fillText('U', C.U[0] + 14, C.U[1] + 20); g.fillText('M', C.M[0], C.M[1] - 10);
+  g.font = `500 11px ${tok('--f-mono')}`; g.fillStyle = tok('--muted'); g.fillText('AUM', cen[0], cen[1] + 24);
+  // your voice: a fading trail
+  trail.forEach((p, i) => { g.globalAlpha = (i + 1) / trail.length * 0.6; g.fillStyle = tok('--wave'); g.beginPath(); g.arc(p[0], p[1], 3, 0, 2 * Math.PI); g.fill(); }); g.globalAlpha = 1;
+  if (voiceW) { const [vx, vy] = toXY(C, voiceW); g.fillStyle = tok('--wave'); g.beginPath(); g.arc(vx, vy, 7, 0, 2 * Math.PI); g.fill(); g.fillStyle = tok('--muted'); g.font = `500 10.5px ${tok('--f-mono')}`; g.fillText('you', vx, vy - 11); }
+  const [hx, hy] = toXY(C, W); g.fillStyle = tok('--vis'); g.beginPath(); g.arc(hx, hy, 10, 0, 2 * Math.PI); g.fill(); g.strokeStyle = tok('--panel'); g.lineWidth = 2; g.stroke();
+  $('aumRead').innerHTML = `<b>Mix:</b> A ${Math.round(W.A * 100)}% · U ${Math.round(W.U * 100)}% · M ${Math.round(W.M * 100)}%. Drag the orange handle; ${holding || chant ? 'you are hearing it now.' : 'press "Sound it" to hear it.'}`;
+}
+const evXY = e => { const r = $('cAum').getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+$('cAum').addEventListener('pointerdown', e => { if (!geo) return; drag = true; $('cAum').setPointerCapture(e.pointerId); stopChant(); W = toW(geo, ...evXY(e)); apply(); draw(); });
+$('cAum').addEventListener('pointermove', e => { if (!drag) return; W = toW(geo, ...evXY(e)); apply(); draw(); });
+['pointerup', 'pointercancel'].forEach(t => $('cAum').addEventListener(t, () => { drag = false; }));
+$('aum_hold').onclick = () => { holding = !holding; stopChant(); if (holding) { build(); apply(true); level(true); } else level(false);
+  $('aum_hold').setAttribute('aria-pressed', holding); $('aum_hold').textContent = holding ? 'Quiet' : 'Sound it'; draw(); };
+// ---------- the chant: A, glide to U, close to M, silence ----------
+function stopChant() { if (!chant) return; clearTimeout(chant.timer); chant = null; $('aum_chant').setAttribute('aria-pressed', false); $('aum_chant').textContent = 'Chant A · U · M · silence'; if (!holding) level(false); }
+function chantOnce() {
+  build(); const L = +$('aum_tempo').value, seg = [['A', 0.22], ['U', 0.22], ['M', 0.36], ['_', 0.2]], t0 = performance.now();
+  level(true, 0.05);
+  const step = () => { if (!chant) return; const s = (performance.now() - t0) / 1000 / L; let acc = 0;
+    for (let i = 0; i < seg.length; i++) { const [k, f] = seg[i]; if (s < acc + f) { const u = (s - acc) / f;
+      if (k === '_') { level(false, 0.15); W = { A: 0, U: 0, M: 1 }; }
+      else { const nx = seg[i + 1][0], blend = clamp((u - 0.7) / 0.3, 0, 1); const cur = { A: 0, U: 0, M: 0 }; cur[k] = 1 - (nx === '_' ? 0 : blend); if (nx !== '_') cur[nx] = blend; else cur[k] = 1; W = cur; level(true, 0.05); }
+      apply(); draw(); chant.timer = setTimeout(step, 30); return; } acc += f; }
+    if ($('aum_loop').checked) chantOnce(); else stopChant(); };
+  chant = { timer: setTimeout(step, 0) };
+}
+$('aum_chant').onclick = () => { if (chant) { stopChant(); return; } holding = false; $('aum_hold').setAttribute('aria-pressed', false); $('aum_hold').textContent = 'Sound it';
+  chantOnce(); $('aum_chant').setAttribute('aria-pressed', true); $('aum_chant').textContent = 'Stop chanting'; };
+// ---------- controls ----------
+function labels() { const f = +$('aum_f0').value, n = 69 + 12 * Math.log2(f / 440), N = Math.round(n), NM = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
+  $('aum_f0V').textContent = `${f.toFixed(1)} Hz · ${NM[(N % 12 + 12) % 12]}${Math.floor(N / 12) - 1}`; const s = +$('aum_size').value;
+  $('aum_sizeV').textContent = s > 1.08 ? 'shorter (higher formants)' : s < 0.95 ? 'longer (lower formants)' : 'adult male'; $('aum_tempoV').textContent = `${$('aum_tempo').value} s`; }
+['aum_f0', 'aum_size', 'aum_tempo'].forEach(id => $(id).addEventListener('input', () => { labels(); apply(); }));
+$('aum_tune').onclick = () => { const m = window.twoStroke && window.twoStroke.MACH.find(x => x.id === 'mow'); if (!m) return; let f = m.rpm / 60; while (f < 80) f *= 2; while (f > 260) f /= 2; $('aum_f0').value = f.toFixed(1); labels(); apply(); };
+// ---------- the microphone: pitch by autocorrelation, formants by linear prediction ----------
+let mic = null, buf = null, pitches = [], feats = [], TPL = null;
+function defaultTpl(size) { return { A: { f1: 730 * size, f2: 1090 * size, lo: 0.35 }, U: { f1: 300 * size, f2: 870 * size, lo: 0.75 }, M: { f1: 250 * size, f2: 1000 * size, lo: 0.97 } }; }
+function lpc(x, order) {                                     // autocorrelation method with Levinson-Durbin
+  const r = new Float64Array(order + 1); for (let k = 0; k <= order; k++) { let s = 0; for (let i = k; i < x.length; i++) s += x[i] * x[i - k]; r[k] = s; }
+  if (r[0] <= 0) return null; r[0] *= 1.0001; const a = new Float64Array(order + 1); a[0] = 1; let e = r[0];
+  for (let i = 1; i <= order; i++) { let acc = r[i]; for (let j = 1; j < i; j++) acc -= a[j] * r[i - j]; const k = acc / e; const tmp = a.slice(); a[i] = k; for (let j = 1; j < i; j++) a[j] = tmp[j] - k * tmp[i - j]; e *= 1 - k * k; if (e <= 0) return null; }
+  return a;
+}
+function analyse() {
+  if (!mic) return; mic.an.getFloatTimeDomainData(buf); const sr = mic.ctx.sampleRate;
+  let rms = 0; for (const v of buf) rms += v * v; rms = Math.sqrt(rms / buf.length);
+  if (rms < 0.01) { $('aumMic').textContent = 'Listening… sing or hum a steady note.'; voiceW = null; draw(); return; }
+  // pitch: the strongest autocorrelation lag between 70 and 500 Hz
+  let best = 0, bestLag = 0; for (let lag = Math.floor(sr / 500); lag <= Math.floor(sr / 70); lag++) { let s = 0; for (let i = 0; i + lag < buf.length; i += 2) s += buf[i] * buf[i + lag]; if (s > best) { best = s; bestLag = lag; } }
+  const f0 = bestLag ? sr / bestLag : 0;
+  // formants: decimate to ~12 kHz, pre-emphasis, window, LPC, then peaks of the envelope
+  const dec = Math.max(1, Math.round(sr / 12000)), fs = sr / dec, n = Math.floor(buf.length / dec), x = new Float64Array(n);
+  for (let i = 0; i < n; i++) { let s = 0; for (let j = 0; j < dec; j++) s += buf[i * dec + j]; x[i] = s / dec; }
+  for (let i = n - 1; i > 0; i--) x[i] -= 0.9 * x[i - 1]; for (let i = 0; i < n; i++) x[i] *= 0.54 - 0.46 * Math.cos(2 * Math.PI * i / (n - 1));
+  const a = lpc(x, 12); if (!a) return; const env = [];
+  for (let f = 100; f <= 3500; f += 10) { let re = 0, im = 0; for (let k = 0; k < a.length; k++) { const w = -2 * Math.PI * f / fs * k; re += a[k] * Math.cos(w); im += a[k] * Math.sin(w); } env.push([f, -10 * Math.log10(re * re + im * im)]); }
+  const peaks = []; for (let i = 1; i < env.length - 1; i++) if (env[i][1] > env[i - 1][1] && env[i][1] > env[i + 1][1]) peaks.push(env[i][0]);
+  const f1 = peaks.find(f => f >= 200 && f <= 1000) || 0, f2 = peaks.find(f => f > f1 + 150 && f <= 2600) || 0;
+  let lo = 0, all = 0; env.forEach(([f, db]) => { const p = Math.pow(10, db / 10); all += p; if (f < 450) lo += p; }); lo = all ? lo / all : 0;   // a hum puts nearly all its energy low
+  if (!f1) return; const ft = { f1, f2: f2 || f1 * 2, lo }; feats.push(ft); if (feats.length > 30) feats.shift();
+  if (f0) { pitches.push(f0); if (pitches.length > 40) pitches.shift(); }
+  // where you are in the triangle: closeness to each corner's template
+  const T = TPL || defaultTpl(+$('aum_size').value), dist = k => Math.hypot((ft.f1 - T[k].f1) / 150, (ft.f2 - T[k].f2) / 300, (ft.lo - T[k].lo) / 0.15);
+  const inv = { A: 1 / (dist('A') ** 2 + 0.05), U: 1 / (dist('U') ** 2 + 0.05), M: 1 / (dist('M') ** 2 + 0.05) }, s = inv.A + inv.U + inv.M;
+  voiceW = { A: inv.A / s, U: inv.U / s, M: inv.M / s }; if (geo) { trail.push(toXY(geo, voiceW)); if (trail.length > 24) trail.shift(); }
+  $('aumMic').textContent = `You: about ${Math.round(f0)} Hz, first two formants ${Math.round(f1)} and ${Math.round(ft.f2)} Hz${lo > 0.85 ? ', a hum' : ''}.`;
+  draw();
+}
+$('aum_mic').onclick = async () => {
+  if (mic) { mic.stream.getTracks().forEach(t => t.stop()); clearInterval(mic.iv); mic.ctx.close(); mic = null; voiceW = null; trail = [];
+    $('aum_mic').setAttribute('aria-pressed', false); $('aum_mic').textContent = 'Listen to my voice'; ['aum_match', 'aum_calA', 'aum_calU', 'aum_calM'].forEach(id => { $(id).disabled = true; }); draw(); return; }
+  try { const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+    const ctx = new (window.AudioContext || window.webkitAudioContext)(), an = ctx.createAnalyser(); an.fftSize = 4096; ctx.createMediaStreamSource(stream).connect(an); buf = new Float32Array(an.fftSize);
+    mic = { stream, ctx, an, iv: setInterval(analyse, 80) }; $('aum_mic').setAttribute('aria-pressed', true); $('aum_mic').textContent = 'Stop listening'; ['aum_match', 'aum_calA', 'aum_calU', 'aum_calM'].forEach(id => { $(id).disabled = false; });
+  } catch (e) { $('aumMic').textContent = 'The microphone isn\'t available here (it may be blocked in this viewer, or permission was declined). It works on the lab\'s website.'; }
+};
+$('aum_match').onclick = () => { if (pitches.length < 5) { $('aumMic').textContent = 'Sing a steady note for a second first.'; return; } const p = pitches.slice().sort((a, b) => a - b)[Math.floor(pitches.length / 2)]; $('aum_f0').value = clamp(p, 60, 400).toFixed(1); labels(); apply(); $('aumMic').textContent = `Matched: ${Math.round(p)} Hz.`; };
+['A', 'U', 'M'].forEach(k => { $('aum_cal' + k).onclick = () => { if (feats.length < 5) { $('aumMic').textContent = 'Hold the sound for a second first.'; return; }
+  const avg = key => feats.slice(-12).reduce((s, f) => s + f[key], 0) / Math.min(12, feats.length); TPL = TPL || defaultTpl(+$('aum_size').value); TPL[k] = { f1: avg('f1'), f2: avg('f2'), lo: avg('lo') };
+  if (k === 'A') { const sz = TPL.A.f1 / 730; $('aum_size').value = clamp(sz, 0.8, 1.4).toFixed(2); labels(); apply(); }   // your "aah" sets the voice size too
+  $('aumMic').textContent = `Learned your "${{ A: 'aah', U: 'ooo', M: 'mmm' }[k]}": formants ${Math.round(TPL[k].f1)} and ${Math.round(TPL[k].f2)} Hz.`; }; });
+window.addEventListener('resize', draw);
+try { new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] }); } catch (e) {}
+labels(); draw();
+})();
+</script>
+
 
 
