@@ -242,6 +242,8 @@ canvas.plot { width: 100%; display: block; }
       <div style="display:grid;gap:10px;min-width:0">
         <canvas class="plot" id="cBill" height="190" aria-label="Fuel and CO2 for one season of this crew, gas compared with battery"></canvas>
         <p class="note" id="billNote"></p>
+        <p class="note"><b>A person at rest</b>, breathing through the same hours, puts out about 25 g of CO₂ an hour: roughly 0.25 L of oxygen in and 0.2 L of CO₂ out each minute. That carbon came from food, so it cycles straight back; the engines' carbon is fossil.</p>
+        <p class="note">What if the leaves just stayed where they fell? <b>Let 'em rot</b>, a detritivory simulator, is coming soon to the lab.</p>
       </div>
     </div>
   </section>
@@ -1047,7 +1049,7 @@ function drawTrace(sim) {
   LEG.forEach(([t, c], k) => { const [lx, ly] = legPos[k]; g.fillStyle = tok(c); g.fillRect(lx, ly, 9, 9); g.fillStyle = tok('--muted'); g.fillText(t, lx + 13, ly + 9); });
 }
 function drawBill(b) {
-  const { g, w, h } = fit($('cBill')), Lp = 120, T = 10, B = 26, pw = w - Lp - 70, rowH = (h - T - B) / 4;
+  const { g, w, h } = fit($('cBill')), Lp = 120, T = 10, B = 26, pw = w - Lp - 96, rowH = (h - T - B) / 4;
   g.clearRect(0, 0, w, h);
   const season = r => ({ fuel: r.fuel * SEASON_DAYS, co2: r.co2 * SEASON_DAYS });
   const gasCo2 = b.rows.reduce((s, r) => s + (r.m.gas ? r.fuel * 2.35 : 0), 0) * SEASON_DAYS;
@@ -1055,12 +1057,14 @@ function drawBill(b) {
   const cur = b.rows.reduce((s, r) => s + r.co2, 0) * SEASON_DAYS;
   const allGas = b.rows.reduce((s, r) => s + r.m.fuel * b.h * 2.35, 0) * SEASON_DAYS;
   const max = Math.max(allGas, 1);
-  const bars = [['this crew, as set', cur, tok('--vis')], ['all gas', allGas, tok('--fume')], ['all battery', batCo2, tok('--calm')]];
+  const REST_KG_H = 0.025;                                  // a resting adult: ~0.25 L O2 a minute, ~0.2 L CO2 a minute, about 25 g CO2 an hour
+  const rest = REST_KG_H * b.h * SEASON_DAYS;               // breathing through the same hours the machines run
+  const bars = [['this crew, as set', cur, tok('--vis')], ['all gas', allGas, tok('--fume')], ['all battery', batCo2, tok('--calm')], ['a person at rest', rest, tok('--muted')]];
   g.font = body(13, 700); g.textBaseline = 'middle';
   bars.forEach(([t, v, c], k) => { const y = T + k * rowH + rowH / 2; g.fillStyle = tok('--muted'); g.textAlign = 'right'; g.fillText(t, Lp - 8, y);
-    g.fillStyle = c; g.fillRect(Lp, y - rowH * 0.32, Math.max(1, v / max * pw), rowH * 0.64); g.fillStyle = tok('--ink'); g.textAlign = 'left'; g.font = mono(12); g.fillText(`${(v / 1000).toFixed(2)} t CO₂`, Lp + v / max * pw + 6, y); g.font = body(13, 700); });
+    g.fillStyle = c; g.fillRect(Lp, y - rowH * 0.32, Math.max(1, v / max * pw), rowH * 0.64); g.fillStyle = tok('--ink'); g.textAlign = 'left'; g.font = mono(12); g.fillText(v < 1000 ? `${Math.round(v)} kg CO₂` : `${(v / 1000).toFixed(2)} t CO₂`, Lp + Math.max(1, v / max * pw) + 6, y); g.font = body(13, 700); });
   g.textBaseline = 'alphabetic'; g.fillStyle = tok('--muted'); g.font = mono(10.5); g.textAlign = 'left';
-  g.fillText(`one worker set, ${SEASON_DAYS} working days, ${b.h} h of each machine per day`, Lp, h - 8);
+  g.fillText(`per worker: ${SEASON_DAYS} days × ${b.h} h of each machine`, Lp, h - 8);
 }
 
 // ================= panels =================
